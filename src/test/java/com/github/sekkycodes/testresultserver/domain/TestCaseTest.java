@@ -3,18 +3,18 @@ package com.github.sekkycodes.testresultserver.domain;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
-import com.github.sekkycodes.testresultserver.vo.TestSuiteVO;
+import com.github.sekkycodes.testresultserver.vo.TestCaseVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class TestSuiteTest {
+public class TestCaseTest {
 
-  private TestSuite sut;
+  private TestCase sut;
 
   @BeforeEach
   void beforeEach() {
-    sut = FixtureHelper.buildTestSuite();
+    sut = FixtureHelper.buildTestCase();
   }
 
   @Nested
@@ -22,11 +22,10 @@ class TestSuiteTest {
 
     @Test
     void convertsDomainObjectToValueObject() {
-      TestSuiteVO vo = sut.toValueObject();
+      TestCaseVO vo = sut.toValueObject();
 
       assertThat(vo.getId()).isEqualTo(sut.getId());
       assertThat(vo.getName()).isEqualTo(sut.getName());
-      assertThat(vo.getTestCaseIds()).isNotEmpty();
     }
   }
 }
