@@ -42,7 +42,7 @@ public class ResultImportController {
       return new ResponseEntity<>(ImportResponse.builder().importedSuites(importedSuites).build(), HttpStatus.CREATED);
     } catch (ImportException e) {
       log.error(e.getMessage(), e);
-      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(ImportResponse.builder().build(), HttpStatus.BAD_REQUEST);
     }
   }
 }
