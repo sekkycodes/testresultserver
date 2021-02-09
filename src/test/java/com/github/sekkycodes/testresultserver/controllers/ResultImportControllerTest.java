@@ -6,10 +6,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.github.sekkycodes.testresultserver.TestBase;
+import com.github.sekkycodes.testresultserver.converters.JunitConverter;
 import com.github.sekkycodes.testresultserver.domain.TestSuite;
 import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteRepository;
 import com.github.sekkycodes.testresultserver.services.FileImportService;
+import com.github.sekkycodes.testresultserver.services.JunitReader;
 import com.github.sekkycodes.testresultserver.vo.ImportResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +49,10 @@ class ResultImportControllerTest extends TestBase {
     when(testSuiteRepository.save(any()))
         .thenReturn(TestSuite.builder().id(id).build());
 
-    FileImportService fileImportService = new FileImportService(testSuiteRepository);
+    JunitReader junitReader = new JunitReader();
+    JunitConverter junitConverter = new JunitConverter();
+    FileImportService fileImportService = new FileImportService(testSuiteRepository, junitReader,
+        junitConverter);
     sut = new ResultImportController(fileImportService);
   }
 

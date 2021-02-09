@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  * Converts raw input streams from JUnit XML files and converts them into java objects
  */
 @Service
-public class JunitConverter {
+public class JunitReader {
 
   /**
    * Converts raw input streams from JUnit XML files and converts them into java objects

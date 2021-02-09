@@ -11,16 +11,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class JunitConverterTest extends TestBase {
+public class JunitReaderTest extends TestBase {
 
-  private JunitConverter sut;
+  private JunitReader sut;
 
   private InputStream inputStream;
 
   @BeforeEach
   void beforeEach() {
     inputStream = this.getClass().getResourceAsStream("/junit-passed.xml");
-    sut = new JunitConverter();
+    sut = new JunitReader();
   }
 
   @AfterEach

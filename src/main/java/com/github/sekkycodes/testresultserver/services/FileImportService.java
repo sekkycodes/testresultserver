@@ -1,15 +1,16 @@
 package com.github.sekkycodes.testresultserver.services;
 
+import com.github.sekkycodes.testresultserver.converters.JunitConverter;
 import com.github.sekkycodes.testresultserver.domain.TestSuite;
 import com.github.sekkycodes.testresultserver.exceptions.ImportException;
+import com.github.sekkycodes.testresultserver.junit.Testsuite;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteRepository;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import javax.xml.bind.JAXBException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,18 @@ import org.springframework.stereotype.Service;
 public class FileImportService {
 
   private final TestSuiteRepository testSuiteRepository;
+  private final JunitReader junitReader;
+  private final JunitConverter junitConverter;
 
   @Autowired
-  public FileImportService(TestSuiteRepository testSuiteRepository) {
+  public FileImportService(
+      TestSuiteRepository testSuiteRepository,
+      JunitReader junitReader,
+      JunitConverter junitConverter) {
+
     this.testSuiteRepository = Objects.requireNonNull(testSuiteRepository);
+    this.junitReader = Objects.requireNonNull(junitReader);
+    this.junitConverter = Objects.requireNonNull(junitConverter);
   }
 
   /**
@@ -33,14 +42,12 @@ public class FileImportService {
    * @return collection of unique IDs of imported test suites
    */
   public Set<UUID> importJunitFile(InputStreamSource source) throws ImportException {
-    try(BufferedReader reader = new BufferedReader(new InputStreamReader(source.getInputStream()))) {
-
-      // TODO: handle file contents
-      HashSet<UUID> importedSuites = new HashSet<>();
-      importedSuites.add(testSuiteRepository.save(TestSuite.builder().build()).getId());
-      return importedSuites;
-
-    } catch (IOException e) {
+    try {
+      Testsuite testsuite = junitReader.readSuite(source.getInputStream());
+      TestSuite suite = junitConverter.toTestSuite(testsuite);
+      TestSuite savedSuite = testSuiteRepository.save(suite);
+      return Collections.singleton(savedSuite.getId());
+    } catch (IOException | JAXBException e) {
       throw new ImportException("Failed to import JUnit file: " + e.getMessage(), e);
     }
   }
