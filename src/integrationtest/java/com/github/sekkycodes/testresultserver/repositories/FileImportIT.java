@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class FileImportIT {
+class FileImportIT {
 
   @Autowired
   FileImportService sut;

@@ -8,7 +8,7 @@ import com.github.sekkycodes.testresultserver.junit.Testsuite.Testcase;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-public class JunitConverterTest {
+class JunitConverterTest {
 
   private JunitConverter sut;
 

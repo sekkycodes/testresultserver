@@ -11,7 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class JunitReaderTest extends TestBase {
+class JunitReaderTest extends TestBase {
 
   private JunitReader sut;
 
