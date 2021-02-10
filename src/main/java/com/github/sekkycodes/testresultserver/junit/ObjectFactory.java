@@ -24,13 +24,14 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Testsuite_QNAME = new QName("", "testsuite");
+    private static final QName _Testsuite_QNAME = new QName("", "testsuite");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.github.sekkycodes.testresultserver.junit
      * 
      */
     public ObjectFactory() {
+        // for serialization
     }
 
     /**
@@ -103,7 +104,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "", name = "testsuite")
     public JAXBElement<com.github.sekkycodes.testresultserver.junit.Testsuite> createTestsuite(com.github.sekkycodes.testresultserver.junit.Testsuite value) {
-        return new JAXBElement<com.github.sekkycodes.testresultserver.junit.Testsuite>(_Testsuite_QNAME, com.github.sekkycodes.testresultserver.junit.Testsuite.class, null, value);
+        return new JAXBElement<>(_Testsuite_QNAME, com.github.sekkycodes.testresultserver.junit.Testsuite.class, null, value);
     }
 
 }

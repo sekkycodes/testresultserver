@@ -74,7 +74,7 @@ public class Testsuites {
      */
     public List<Testsuites.Testsuite> getTestsuite() {
         if (testsuite == null) {
-            testsuite = new ArrayList<Testsuites.Testsuite>();
+            testsuite = new ArrayList<>();
         }
         return this.testsuite;
     }

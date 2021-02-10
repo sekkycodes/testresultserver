@@ -217,7 +217,7 @@ public class Testsuite {
      */
     public List<Testsuite.Testcase> getTestcase() {
         if (testcase == null) {
-            testcase = new ArrayList<Testsuite.Testcase>();
+            testcase = new ArrayList<>();
         }
         return this.testcase;
     }
@@ -505,7 +505,7 @@ public class Testsuite {
          */
         public List<Testsuite.Properties.Property> getProperty() {
             if (property == null) {
-                property = new ArrayList<Testsuite.Properties.Property>();
+                property = new ArrayList<>();
             }
             return this.property;
         }
