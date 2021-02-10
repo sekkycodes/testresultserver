@@ -8,6 +8,7 @@ import com.github.sekkycodes.testresultserver.repositories.TestSuiteRepository;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
@@ -38,17 +39,24 @@ public class FileImportService {
 
   /**
    * Imports from a JUnit XML input stream.
+   *
    * @param source input stream source of JUnix XML file
    * @return collection of unique IDs of imported test suites
    */
   public Set<UUID> importJunitFile(InputStreamSource source) throws ImportException {
     try {
-      Testsuite testsuite = junitReader.readSuite(source.getInputStream());
-      TestSuite suite = junitConverter.toTestSuite(testsuite);
-      TestSuite savedSuite = testSuiteRepository.save(suite);
-      return Collections.singleton(savedSuite.getId());
+      Testsuite junitSuite = junitReader.readSuite(source.getInputStream());
+      TestSuite suite = junitConverter.toTestSuite(junitSuite);
+      UUID savedId = createOrUpdate(suite);
+      return Collections.singleton(savedId);
     } catch (IOException | JAXBException e) {
       throw new ImportException("Failed to import JUnit file: " + e.getMessage(), e);
     }
+  }
+
+  private UUID createOrUpdate(TestSuite suite) {
+    Optional<TestSuite> existingSuite = testSuiteRepository.findByName(suite.getName());
+    existingSuite.ifPresent(testSuite -> suite.setId(testSuite.getId()));
+    return testSuiteRepository.save(suite).getId();
   }
 }

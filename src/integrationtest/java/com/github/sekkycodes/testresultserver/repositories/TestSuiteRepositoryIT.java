@@ -60,6 +60,16 @@ class TestSuiteRepositoryIT {
     assertThat(result.isPresent()).isTrue();
     assertThat(result.get().getName()).isEqualTo(newName);
     // And an additional test case
-    assertThat(result.get().getTestCases().stream().map(TestCase::getName).collect(Collectors.toSet())).contains(testCaseName);
+    assertThat(
+        result.get().getTestCases().stream().map(TestCase::getName).collect(Collectors.toSet()))
+        .contains(testCaseName);
+  }
+
+  @Test
+  void findsTestSuiteByName() {
+    Optional<TestSuite> result = sut.findByName(storedTestSuite.getName());
+
+    assertThat(result.isPresent()).isTrue();
+    assertThat(result.get().getId()).isEqualTo(storedTestSuite.getId());
   }
 }
