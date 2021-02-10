@@ -20,6 +20,13 @@ To run unit and integration tests:
 
     mvn verify
 
+Run docker container:
+
+    mvn install
+    mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+    docker build -t sekkycodes/testresultserver .
+    docker run -p 8080:8080 sekkycodes/testresultserver
+
 # Development
 
 ## Code Style
