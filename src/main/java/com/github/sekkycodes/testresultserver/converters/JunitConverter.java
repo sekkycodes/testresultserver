@@ -5,6 +5,7 @@ import com.github.sekkycodes.testresultserver.domain.TestResult;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.junit.Testsuite;
+import java.math.BigDecimal;
 import java.time.Clock;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class JunitConverter {
 
     return TestSuiteExecution.builder()
         .id(new TimeNamePK(junitSuite.getName(), executionTimestamp))
-        .duration(junitSuite.getTime().longValue())
+        .duration(toMillis(junitSuite.getTime()))
         .build();
   }
 
@@ -50,7 +51,7 @@ public class JunitConverter {
     return TestCaseExecution.builder()
         .id(new TimeNamePK(testCase.getName(), executionTime))
         .suiteName(suiteName)
-        .duration(testCase.getTime().longValue())
+        .duration(toMillis(testCase.getTime()))
         .result(toTestResult(testCase))
         .build();
   }
@@ -69,6 +70,11 @@ public class JunitConverter {
     return executionTimestamp == 0
         ? clock.millis()
         : executionTimestamp;
+  }
+
+  // time in test suites and cases is given as a floating point number denoting seconds
+  private long toMillis(BigDecimal decimal) {
+    return decimal.multiply(BigDecimal.valueOf(1000)).longValue();
   }
 
   private TestResult toTestResult(Testsuite.Testcase testcase) {

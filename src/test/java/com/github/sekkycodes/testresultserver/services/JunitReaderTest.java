@@ -7,6 +7,7 @@ import com.github.sekkycodes.testresultserver.junit.Testsuite;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class JunitReaderTest extends TestBase {
   }
 
   @Test
-  void readsTestSuiteFromXmlInputStream() throws JAXBException {
+  void readsTestSuiteFromXmlInputStream() throws JAXBException, IOException, XMLStreamException {
     Testsuite suite = sut.readSuite(inputStream);
     assertEquals(1, suite.getTestcase().size());
   }

@@ -10,11 +10,15 @@ import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRep
 import com.github.sekkycodes.testresultserver.vo.ImportResult;
 import com.github.sekkycodes.testresultserver.vo.TestCaseExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.stereotype.Service;
@@ -67,7 +71,7 @@ public class FileImportService {
           .importedCases(caseExecutionVOs)
           .build();
 
-    } catch (IOException | JAXBException e) {
+    } catch (IOException | JAXBException | XMLStreamException e) {
       throw new ImportException("Failed to import JUnit file: " + e.getMessage(), e);
     }
   }

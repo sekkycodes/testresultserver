@@ -48,7 +48,7 @@ class JunitConverterTest {
 
       assertThat(result.getId().getName()).isEqualTo("dummyTestSuite");
       assertThat(result.getId().getTime()).isEqualTo(TIME_MILLIS);
-      assertThat(result.getDuration()).isEqualTo(10L);
+      assertThat(result.getDuration()).isEqualTo(10_000L);
     }
 
     @Test
@@ -101,7 +101,7 @@ class JunitConverterTest {
       assertThat(result.getId().getName()).isEqualTo(dummyCase.getName());
       assertThat(result.getId().getTime()).isEqualTo(TIME_MILLIS);
       assertThat(result.getSuiteName()).isEqualTo(SUITE_NAME);
-      assertThat(result.getDuration()).isEqualTo(dummyCase.getTime().longValue());
+      assertThat(result.getDuration()).isEqualTo(1000L);
       assertThat(result.getResult()).isEqualTo(TestResult.PASSED);
     }
 
