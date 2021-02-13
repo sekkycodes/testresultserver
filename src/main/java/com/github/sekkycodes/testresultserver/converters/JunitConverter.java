@@ -1,10 +1,13 @@
 package com.github.sekkycodes.testresultserver.converters;
 
-import com.github.sekkycodes.testresultserver.domain.TestCase;
-import com.github.sekkycodes.testresultserver.domain.TestSuite;
+import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
+import com.github.sekkycodes.testresultserver.domain.TestResult;
+import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
+import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.junit.Testsuite;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.time.Clock;
+import javax.xml.datatype.XMLGregorianCalendar;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,31 +16,70 @@ import org.springframework.stereotype.Service;
 @Service
 public class JunitConverter {
 
+  private final Clock clock;
+
+  @Autowired
+  public JunitConverter(Clock clock) {
+    this.clock = clock;
+  }
+
   /**
-   * Converts JUnit Testsuite object to canonical TestSuite entity
+   * Converts JUnit Testsuite object to canonical TestSuiteExecution entity
    *
    * @param junitSuite suite to be converted
-   * @return converted suite object
+   * @return converted suite execution object
    */
-  public TestSuite toTestSuite(Testsuite junitSuite) {
-    Set<TestCase> testCases = junitSuite.getTestcase().stream().map(this::toTestCase)
-        .collect(Collectors.toSet());
+  public TestSuiteExecution toTestSuiteExecution(Testsuite junitSuite) {
+    long executionTimestamp = getExecutionTimeStamp(junitSuite.getTimestamp());
 
-    return TestSuite.builder()
-        .name(junitSuite.getName())
-        .testCases(testCases)
+    return TestSuiteExecution.builder()
+        .id(new TimeNamePK(junitSuite.getName(), executionTimestamp))
+        .duration(junitSuite.getTime().longValue())
         .build();
   }
 
   /**
-   * Converts JUnit Testcase object to canonical TestCase entity
+   * Converts JUnit Testcase object to canonical TestCaseExecution entity
    *
    * @param testCase case to be converted
-   * @return converted case object
+   * @return converted case execution object
    */
-  public TestCase toTestCase(Testsuite.Testcase testCase) {
-    return TestCase.builder()
-        .name(testCase.getName())
+  public TestCaseExecution toTestCaseExecution(Testsuite.Testcase testCase, String suiteName,
+      long executionTime) {
+
+    return TestCaseExecution.builder()
+        .id(new TimeNamePK(testCase.getName(), executionTime))
+        .suiteName(suiteName)
+        .duration(testCase.getTime().longValue())
+        .result(toTestResult(testCase))
         .build();
+  }
+
+  /**
+   * Falls back to current timestamp if none is set in the junit suite
+   *
+   * @param calendar the calendar object which is to be converted to
+   * @return time stamp of the test execution as epoch millis
+   */
+  private long getExecutionTimeStamp(XMLGregorianCalendar calendar) {
+    long executionTimestamp = calendar == null
+        ? clock.millis()
+        : calendar.toGregorianCalendar().getTimeInMillis();
+
+    return executionTimestamp == 0
+        ? System.currentTimeMillis()
+        : executionTimestamp;
+  }
+
+  private TestResult toTestResult(Testsuite.Testcase testcase) {
+    if (testcase.getSkipped() != null) {
+      return TestResult.SKIPPED;
+    } else if (testcase.getError() != null) {
+      return TestResult.ERROR;
+    } else if (testcase.getFailure() != null) {
+      return TestResult.FAILED;
+    } else {
+      return TestResult.PASSED;
+    }
   }
 }

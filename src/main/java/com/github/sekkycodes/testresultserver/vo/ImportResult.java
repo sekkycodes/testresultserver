@@ -3,20 +3,24 @@ package com.github.sekkycodes.testresultserver.vo;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import java.util.Set;
-import java.util.UUID;
 import lombok.Builder;
 import lombok.Value;
 
 /**
- * Response VO for importing, summarizing import data
+ * Result VO for importing, summarizing imported data
  */
 @Value
 @Builder(toBuilder = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-public class ImportResponse {
+public class ImportResult {
 
   /**
-   * Collection of unique IDs of imported suites
+   * Imported test suite execution
    */
-  Set<UUID> importedSuites;
+  TestSuiteExecutionVO importedSuite;
+
+  /**
+   * Set of imported test case executions
+   */
+  Set<TestCaseExecutionVO> importedCases;
 }

@@ -2,10 +2,8 @@ package com.github.sekkycodes.testresultserver.controllers;
 
 import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.services.FileImportService;
-import com.github.sekkycodes.testresultserver.vo.ImportResponse;
+import com.github.sekkycodes.testresultserver.vo.ImportResult;
 import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,18 +29,20 @@ public class ResultImportController {
 
   /**
    * Endpoint for importing JUnit XML file
+   *
    * @param file the JUnit XML file
    * @return a collection of imported test suite IDs
    */
   @PostMapping("/import-junit")
-  public ResponseEntity<ImportResponse> importJunitResults(@RequestParam("file") MultipartFile file) {
+  public ResponseEntity<ImportResult> importJunitResults(
+      @RequestParam("file") MultipartFile file) {
 
     try {
-      Set<UUID> importedSuites = fileImportService.importJunitFile(file);
-      return new ResponseEntity<>(ImportResponse.builder().importedSuites(importedSuites).build(), HttpStatus.CREATED);
+      ImportResult response = fileImportService.importJunitFile(file);
+      return new ResponseEntity<>(response, HttpStatus.CREATED);
     } catch (ImportException e) {
       log.error(e.getMessage(), e);
-      return new ResponseEntity<>(ImportResponse.builder().build(), HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(ImportResult.builder().build(), HttpStatus.BAD_REQUEST);
     }
   }
 }
