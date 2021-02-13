@@ -67,7 +67,7 @@ public class JunitConverter {
         : calendar.toGregorianCalendar().getTimeInMillis();
 
     return executionTimestamp == 0
-        ? System.currentTimeMillis()
+        ? clock.millis()
         : executionTimestamp;
   }
 
