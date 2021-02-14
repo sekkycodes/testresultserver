@@ -1,4 +1,4 @@
-package com.github.sekkycodes.testresultserver.services;
+package com.github.sekkycodes.testresultserver.configuration;
 
 import java.time.Clock;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  * Supplies Clocks for Dependency Injection
  */
 @Configuration
-public class ClockFactory {
+public class ClockConfig {
 
   /**
    * Creates a new Clock object with the System's default time zone

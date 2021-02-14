@@ -1,4 +1,4 @@
-package com.github.sekkycodes.testresultserver.services;
+package com.github.sekkycodes.testresultserver.configuration;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -8,13 +8,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-public class ClockFactoryTest {
+public class ClockConfigTest {
 
-  private ClockFactory sut;
+  private ClockConfig sut;
 
   @BeforeEach
   void beforeEach() {
-    sut = new ClockFactory();
+    sut = new ClockConfig();
   }
 
   @Nested
