@@ -3,6 +3,7 @@ package com.github.sekkycodes.testresultserver.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.github.sekkycodes.testresultserver.TestBase;
+import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.junit.Testsuite;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +31,7 @@ class JunitReaderTest extends TestBase {
   }
 
   @Test
-  void readsTestSuiteFromXmlInputStream() throws JAXBException, IOException, XMLStreamException {
+  void readsTestSuiteFromXmlInputStream() throws ImportException {
     Testsuite suite = sut.readSuite(inputStream);
     assertEquals(1, suite.getTestcase().size());
   }

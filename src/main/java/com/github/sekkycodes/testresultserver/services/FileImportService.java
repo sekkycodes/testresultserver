@@ -10,15 +10,11 @@ import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRep
 import com.github.sekkycodes.testresultserver.vo.ImportResult;
 import com.github.sekkycodes.testresultserver.vo.TestCaseExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
-import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLStreamException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.stereotype.Service;
@@ -54,25 +50,28 @@ public class FileImportService {
    * @return value object of saved test suite execution
    */
   public ImportResult importJunitFile(InputStreamSource source) throws ImportException {
+    InputStream in;
     try {
-      Testsuite junitSuite = junitReader.readSuite(source.getInputStream());
-      TestSuiteExecution suite = junitConverter.toTestSuiteExecution(junitSuite);
-      TestSuiteExecutionVO suiteVO = testSuiteExecutionRepository.save(suite).toValueObject();
-
-      Set<TestCaseExecutionVO> caseExecutionVOs = new HashSet<>();
-      for (Testsuite.Testcase junitTestcase : junitSuite.getTestcase()) {
-        TestCaseExecution caseExe = junitConverter
-            .toTestCaseExecution(junitTestcase, suiteVO.getIdName(), suiteVO.getIdTime());
-        caseExecutionVOs.add(testCaseExecutionRepository.save(caseExe).toValueObject());
-      }
-
-      return ImportResult.builder()
-          .importedSuite(suiteVO)
-          .importedCases(caseExecutionVOs)
-          .build();
-
-    } catch (IOException | JAXBException | XMLStreamException e) {
-      throw new ImportException("Failed to import JUnit file: " + e.getMessage(), e);
+      in = source.getInputStream();
+    } catch (IOException e) {
+      throw new ImportException("Failed to open stream of file to import");
     }
+
+    Testsuite junitSuite = junitReader.readSuite(in);
+    TestSuiteExecution suite = junitConverter.toTestSuiteExecution(junitSuite);
+    TestSuiteExecutionVO suiteVO = testSuiteExecutionRepository.save(suite).toValueObject();
+
+    Set<TestCaseExecutionVO> caseExecutionVOs = new HashSet<>();
+    for (Testsuite.Testcase junitTestcase : junitSuite.getTestcase()) {
+      TestCaseExecution caseExe = junitConverter
+          .toTestCaseExecution(junitTestcase, suiteVO.getIdName(), suiteVO.getIdTime());
+      caseExecutionVOs.add(testCaseExecutionRepository.save(caseExe).toValueObject());
+    }
+
+    return ImportResult.builder()
+        .importedSuite(suiteVO)
+        .importedCases(caseExecutionVOs)
+        .build();
+
   }
 }
