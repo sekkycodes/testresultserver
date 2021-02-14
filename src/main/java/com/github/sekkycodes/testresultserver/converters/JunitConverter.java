@@ -33,9 +33,18 @@ public class JunitConverter {
   public TestSuiteExecution toTestSuiteExecution(Testsuite junitSuite) {
     long executionTimestamp = getExecutionTimeStamp(junitSuite.getTimestamp());
 
+    int passed =
+        junitSuite.getTests() - junitSuite.getErrors()
+            - junitSuite.getSkipped() - junitSuite.getFailures();
+
     return TestSuiteExecution.builder()
         .id(new TimeNamePK(junitSuite.getName(), executionTimestamp))
         .duration(toMillis(junitSuite.getTime()))
+        .testCasesTotal(junitSuite.getTests())
+        .testCasesPassed(passed)
+        .testCasesFailed(junitSuite.getFailures())
+        .testCasesSkipped(junitSuite.getSkipped())
+        .testCasesWithError(junitSuite.getErrors())
         .build();
   }
 

@@ -49,6 +49,11 @@ class JunitConverterTest {
       assertThat(result.getId().getName()).isEqualTo("dummyTestSuite");
       assertThat(result.getId().getTime()).isEqualTo(TIME_MILLIS);
       assertThat(result.getDuration()).isEqualTo(10_000L);
+      assertThat(result.getTestCasesTotal()).isEqualTo(1);
+      assertThat(result.getTestCasesPassed()).isEqualTo(1);
+      assertThat(result.getTestCasesFailed()).isEqualTo(0);
+      assertThat(result.getTestCasesSkipped()).isEqualTo(0);
+      assertThat(result.getTestCasesWithError()).isEqualTo(0);
     }
 
     @Test
@@ -79,6 +84,10 @@ class JunitConverterTest {
       GregorianCalendar calendar = new GregorianCalendar();
       calendar.setTimeInMillis(TIME_MILLIS);
       suite.setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar));
+      suite.setSkipped(0);
+      suite.setTests(1);
+      suite.setFailures(0);
+      suite.setErrors(0);
       return suite;
     }
   }
