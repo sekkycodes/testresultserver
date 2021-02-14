@@ -27,6 +27,11 @@ public class TestSuiteExecutionTest {
       assertThat(vo.getIdName()).isEqualTo(sut.getId().getName());
       assertThat(vo.getIdTime()).isEqualTo(sut.getId().getTime());
       assertThat(vo.getDuration()).isEqualTo(sut.getDuration());
+      assertThat(vo.getTestCasesTotal()).isEqualTo(sut.getTestCasesTotal());
+      assertThat(vo.getTestCasesPassed()).isEqualTo(sut.getTestCasesPassed());
+      assertThat(vo.getTestCasesSkipped()).isEqualTo(sut.getTestCasesSkipped());
+      assertThat(vo.getTestCasesFailed()).isEqualTo(sut.getTestCasesFailed());
+      assertThat(vo.getTestCasesWithError()).isEqualTo(sut.getTestCasesWithError());
     }
   }
 }

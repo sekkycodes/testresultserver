@@ -35,6 +35,31 @@ public class TestSuiteExecution {
   long duration;
 
   /**
+   * Total number of test cases executed
+   */
+  int testCasesTotal;
+
+  /**
+   * Number of passed test cases
+   */
+  int testCasesPassed;
+
+  /**
+   * Number of skipped test cases
+   */
+  int testCasesSkipped;
+
+  /**
+   * Number of failed test cases
+   */
+  int testCasesFailed;
+
+  /**
+   * Number of test cases that had an error occurring during execution
+   */
+  int testCasesWithError;
+
+  /**
    * Converts the domain object into an immutable value object
    * @return mapped value object
    */
@@ -43,6 +68,11 @@ public class TestSuiteExecution {
         .idName(id.getName())
         .idTime(id.getTime())
         .duration(duration)
+        .testCasesTotal(testCasesTotal)
+        .testCasesPassed(testCasesPassed)
+        .testCasesFailed(testCasesFailed)
+        .testCasesSkipped(testCasesSkipped)
+        .testCasesWithError(testCasesWithError)
         .build();
   }
 }
