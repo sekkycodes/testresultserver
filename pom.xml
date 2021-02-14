@@ -166,6 +166,12 @@
       </properties>
     </profile>
     <profile>
+      <id>prod</id>
+      <properties>
+        <spring.profiles.active>prod</spring.profiles.active>
+      </properties>
+    </profile>
+    <profile>
       <id>integration-test</id>
       <properties>
         <spring.profiles.active>local</spring.profiles.active>
