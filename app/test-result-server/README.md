@@ -1,5 +1,10 @@
 # test-result-server
 
+## Pre-Requisites
+
+* [NodeJS](https://nodejs.org/en/download/)
+* [Vue CLI](https://cli.vuejs.org/guide/installation.html)
+
 ## Project setup
 ```
 npm install
