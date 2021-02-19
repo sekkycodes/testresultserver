@@ -16,6 +16,8 @@ import com.github.sekkycodes.testresultserver.repositories.TestCaseExecutionRepo
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.services.FileImportService;
 import com.github.sekkycodes.testresultserver.services.JunitReader;
+import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
+import com.github.sekkycodes.testresultserver.vo.ImportRequest;
 import com.github.sekkycodes.testresultserver.vo.ImportResult;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +26,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
@@ -78,26 +81,65 @@ class ResultImportControllerTest extends TestBase {
     inputStream.close();
   }
 
-  @Test
-  void createsANewSuiteExecution() {
-    ResponseEntity<ImportResult> responseEntity = sut.importJunitResults(multipartFile);
+  @Nested
+  class ImportJunitResults {
 
-    assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.CREATED.value());
-    assertThat(responseEntity.getBody()).isNotNull();
-    ImportResult importResult = responseEntity.getBody();
-    assertThat(importResult.getImportedSuite()).isNotNull();
-    assertThat(importResult.getImportedCases().size()).isEqualTo(1);
-    assertThat(importResult.getImportedSuite().getIdTime()).isEqualTo(TIMESTAMP);
-  }
+    private ImportRequest importRequest;
 
-  @Test
-  void returnsBadRequestResponseIfFileCannotBeRead() throws ImportException {
-    FileImportService fileImportService = mock(FileImportService.class);
-    when(fileImportService.importJunitFile(any())).thenThrow(new ImportException("some error"));
-    sut = new ResultImportController(fileImportService);
+    @BeforeEach
+    void beforeEach() {
+      importRequest = FixtureHelper.buildImportRequest();
+    }
 
-    ResponseEntity<ImportResult> responseEntity = sut.importJunitResults(multipartFile);
+    @Test
+    void createsANewSuiteExecution() {
+      ResponseEntity<ImportResult> responseEntity = sut
+          .importJunitResults(multipartFile, importRequest);
 
-    assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+      assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.CREATED.value());
+      assertThat(responseEntity.getBody()).isNotNull();
+      ImportResult importResult = responseEntity.getBody();
+      assertThat(importResult.getImportedSuite()).isNotNull();
+      assertThat(importResult.getImportedCases().size()).isEqualTo(1);
+      assertThat(importResult.getImportedSuite().getIdTime()).isEqualTo(TIMESTAMP);
+    }
+
+    @Test
+    void returnsBadRequestResponseIfFileCannotBeRead() throws ImportException {
+      FileImportService fileImportService = mock(FileImportService.class);
+      when(fileImportService.importJunitFile(any())).thenThrow(new ImportException("some error"));
+      sut = new ResultImportController(fileImportService);
+
+      ResponseEntity<ImportResult> responseEntity = sut
+          .importJunitResults(multipartFile, importRequest);
+
+      assertErrorMessage(responseEntity, "some error", HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void returnsBadRequestIfNoFileWasProvided() {
+      ResponseEntity<ImportResult> responseEntity = sut
+          .importJunitResults(null, importRequest);
+
+      assertErrorMessage(responseEntity, ResultImportController.NO_FILE_ERROR_TEXT,
+          HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void returnsBadRequestIfNoRequestBodyWasProvided() {
+      ResponseEntity<ImportResult> responseEntity = sut
+          .importJunitResults(multipartFile, null);
+
+      assertErrorMessage(responseEntity, ResultImportController.NO_BODY_ERROR_TEXT,
+          HttpStatus.BAD_REQUEST);
+    }
+
+    private void assertErrorMessage(ResponseEntity<ImportResult> response,
+        String expectedErrorMessage, HttpStatus expectedStatus) {
+
+      assertThat(response.getStatusCodeValue()).isEqualTo(expectedStatus.value());
+      assertThat(response.getBody()).isNotNull();
+      assertThat(response.getBody().getErrorMessage()).isEqualTo(expectedErrorMessage);
+    }
   }
 }

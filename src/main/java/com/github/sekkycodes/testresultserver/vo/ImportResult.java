@@ -23,4 +23,14 @@ public class ImportResult {
    * Set of imported test case executions
    */
   Set<TestCaseExecutionVO> importedCases;
+
+  /**
+   * If an error occurred during import, this field can be used to provide additional information
+   * about that error
+   */
+  String errorMessage;
+
+  public static ImportResult empty() {
+    return ImportResult.builder().build();
+  }
 }
