@@ -26,6 +26,8 @@ public class TestSuiteExecutionTest {
 
       assertThat(vo.getIdName()).isEqualTo(sut.getId().getName());
       assertThat(vo.getIdTime()).isEqualTo(sut.getId().getTime());
+      assertThat(vo.getProject()).isEqualTo(sut.getProject());
+      assertThat(vo.getTestType()).isEqualTo(sut.getTestType());
       assertThat(vo.getDuration()).isEqualTo(sut.getDuration());
       assertThat(vo.getTestCasesTotal()).isEqualTo(sut.getTestCasesTotal());
       assertThat(vo.getTestCasesPassed()).isEqualTo(sut.getTestCasesPassed());

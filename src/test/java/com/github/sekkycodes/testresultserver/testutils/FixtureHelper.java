@@ -4,7 +4,7 @@ import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
 import com.github.sekkycodes.testresultserver.domain.TestResult;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
-import com.github.sekkycodes.testresultserver.vo.ImportRequest;
+import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
 import java.util.Collections;
 
 /**
@@ -16,6 +16,13 @@ public class FixtureHelper {
     return TestSuiteExecution.builder()
         .id(new TimeNamePK("dummy test suite", System.currentTimeMillis()))
         .duration(1000L)
+        .project("myDummyProject")
+        .testType("Unit")
+        .testCasesTotal(10)
+        .testCasesPassed(1)
+        .testCasesFailed(2)
+        .testCasesSkipped(3)
+        .testCasesWithError(4)
         .build();
   }
 

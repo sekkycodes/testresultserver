@@ -2,8 +2,8 @@ package com.github.sekkycodes.testresultserver.controllers;
 
 import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.services.FileImportService;
-import com.github.sekkycodes.testresultserver.vo.ImportRequest;
-import com.github.sekkycodes.testresultserver.vo.ImportResult;
+import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
+import com.github.sekkycodes.testresultserver.vo.importing.ImportResult;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

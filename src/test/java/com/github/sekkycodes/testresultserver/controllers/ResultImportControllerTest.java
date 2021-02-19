@@ -17,8 +17,8 @@ import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRep
 import com.github.sekkycodes.testresultserver.services.FileImportService;
 import com.github.sekkycodes.testresultserver.services.JunitReader;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
-import com.github.sekkycodes.testresultserver.vo.ImportRequest;
-import com.github.sekkycodes.testresultserver.vo.ImportResult;
+import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
+import com.github.sekkycodes.testresultserver.vo.importing.ImportResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Clock;

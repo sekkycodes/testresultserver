@@ -7,7 +7,7 @@ import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.junit.Testsuite;
 import com.github.sekkycodes.testresultserver.repositories.TestCaseExecutionRepository;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
-import com.github.sekkycodes.testresultserver.vo.ImportResult;
+import com.github.sekkycodes.testresultserver.vo.importing.ImportResult;
 import com.github.sekkycodes.testresultserver.vo.TestCaseExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import java.io.IOException;

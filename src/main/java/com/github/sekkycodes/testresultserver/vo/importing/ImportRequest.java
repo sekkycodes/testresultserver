@@ -1,4 +1,4 @@
-package com.github.sekkycodes.testresultserver.vo;
+package com.github.sekkycodes.testresultserver.vo.importing;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;

@@ -12,6 +12,8 @@ public class TestSuiteExecutionVO {
 
   String idName;
   long idTime;
+  String project;
+  String testType;
   long duration;
   int testCasesTotal;
   int testCasesPassed;
