@@ -11,10 +11,15 @@ import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
 import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
 import com.google.common.base.Strings;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.Builder;
+import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -26,14 +31,11 @@ import org.springframework.stereotype.Service;
 public class AggregatedResultsReporter {
 
   private final TestSuiteExecutionRepository testSuiteExecutionRepository;
-  private final ReportConverter reportConverter;
 
   @Autowired
-  public AggregatedResultsReporter(TestSuiteExecutionRepository testSuiteExecutionRepository,
-      ReportConverter reportConverter) {
+  public AggregatedResultsReporter(TestSuiteExecutionRepository testSuiteExecutionRepository) {
 
     this.testSuiteExecutionRepository = Objects.requireNonNull(testSuiteExecutionRepository);
-    this.reportConverter = Objects.requireNonNull(reportConverter);
   }
 
   /**
@@ -52,14 +54,23 @@ public class AggregatedResultsReporter {
 
     List<TestSuiteExecutionVO> limited = limit(suiteExecutions, filter, aggregateBys);
 
-    List<AggregatedReportEntry> entries = limited.stream()
-        .map(reportConverter::toAggregatedReportEntry)
+    AggregatedEntry aggregated = AggregatedEntry.builder()
+        .aggregatedByValues(new ArrayList<>())
+        .original(limited)
+        .build();
+
+    List<AggregatedEntry> aggregatedEntries = Collections.singletonList(aggregated);
+    for (AggregateBy aggregateBy : aggregateBys) {
+      aggregatedEntries = aggregate(aggregatedEntries, aggregateBy);
+    }
+
+    List<AggregatedReportEntry> entries = aggregatedEntries.stream()
+        .map(AggregatedEntry::toReportEntry)
         .collect(Collectors.toList());
 
-    List<AggregatedReportEntry> aggregated = aggregate(entries, aggregateBys);
     return AggregatedReport.builder()
         .aggregationDimensions(new ArrayList<>(aggregateBys))
-        .entries(aggregated)
+        .entries(entries)
         .build();
   }
 
@@ -93,20 +104,9 @@ public class AggregatedResultsReporter {
     return suiteExecutions;
   }
 
-  private List<AggregatedReportEntry> aggregate(List<AggregatedReportEntry> entries,
-      List<AggregateBy> aggregateBys) {
+  private List<AggregatedEntry> aggregate(List<AggregatedEntry> entries, AggregateBy aggregateBys) {
 
-    if(aggregateBys.isEmpty()) {
-      return entries;
-    }
-
-    List<AggregatedReportEntry> subAggregated = aggregate(entries,
-        aggregateBys.stream().skip(1).collect(
-            Collectors.toList()));
-
-    AggregateBy by = aggregateBys.get(0);
-
-    switch(by) {
+    switch (aggregateBys) {
       case DATE:
         return aggregateByDate(entries);
       case LABEL:
@@ -114,22 +114,79 @@ public class AggregatedResultsReporter {
       case TEST_TYPE:
         return aggregateByTestType(entries);
       default:
-        throw new IllegalStateException("no support for aggregation by: " + by.name());
+        throw new IllegalStateException("no support for aggregation by: " + aggregateBys.name());
     }
   }
 
-  private List<AggregatedReportEntry> aggregateByDate(List<AggregatedReportEntry> entries) {
+  private List<AggregatedEntry> aggregateByDate(List<AggregatedEntry> entries) {
     // TODO
     return entries;
   }
 
-  private List<AggregatedReportEntry> aggregateByLabels(List<AggregatedReportEntry> entries) {
+  private List<AggregatedEntry> aggregateByLabels(List<AggregatedEntry> entries) {
     // TODO
     return entries;
   }
 
-  private List<AggregatedReportEntry> aggregateByTestType(List<AggregatedReportEntry> entries) {
-    // TODO
-    return entries;
+  private List<AggregatedEntry> aggregateByTestType(List<AggregatedEntry> entries) {
+
+    List<AggregatedEntry> result = new ArrayList<>();
+
+    for (AggregatedEntry entry : entries) {
+      Map<String, List<TestSuiteExecutionVO>> grouped = entry.getOriginal().stream()
+          .collect(Collectors.groupingBy(TestSuiteExecutionVO::getTestType));
+      for(Map.Entry<String, List<TestSuiteExecutionVO>> groupedEntry : grouped.entrySet()) {
+        List<String> aggregatedByValues = new ArrayList<>(entry.getAggregatedByValues());
+        aggregatedByValues.add(groupedEntry.getKey());
+        AggregatedEntry newEntry = AggregatedEntry.builder()
+            .aggregatedByValues(aggregatedByValues)
+            .original(groupedEntry.getValue())
+            .build();
+        result.add(newEntry);
+      }
+    }
+
+    return result;
+  }
+
+  @Value
+  @Builder(toBuilder = true)
+  private static class AggregatedEntry {
+
+    List<String> aggregatedByValues;
+
+    List<TestSuiteExecutionVO> original;
+
+    AggregatedReportEntry toReportEntry() {
+
+      int totalTestCases = 0;
+      int passedTestCases = 0;
+      int failedTestCases = 0;
+      int skippedTestCases = 0;
+      int testCasesWithError = 0;
+      long duration = 0;
+      List<Map.Entry<String, Long>> entries = new ArrayList<>();
+
+      for (TestSuiteExecutionVO suite : original) {
+        totalTestCases += suite.getTestCasesTotal();
+        passedTestCases += suite.getTestCasesPassed();
+        failedTestCases += suite.getTestCasesFailed();
+        skippedTestCases += suite.getTestCasesSkipped();
+        testCasesWithError += suite.getTestCasesWithError();
+        duration += suite.getDuration();
+        entries.add(new SimpleEntry<>(suite.getIdName(), suite.getIdTime()));
+      }
+
+      return AggregatedReportEntry.builder()
+          .testSuiteExecutionIds(entries)
+          .testCasesTotal(totalTestCases)
+          .testCasesPassed(passedTestCases)
+          .testCasesSkipped(skippedTestCases)
+          .testCasesFailed(failedTestCases)
+          .testCasesWithError(testCasesWithError)
+          .duration(duration)
+          .aggregatedByValues(getAggregatedByValues())
+          .build();
+    }
   }
 }

@@ -8,12 +8,10 @@ import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.services.AggregatedResultsReporter;
 import com.github.sekkycodes.testresultserver.services.LatestResultsReporter;
-import com.github.sekkycodes.testresultserver.services.ReportConverter;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import java.util.Collection;
 import java.util.Collections;
-import org.h2.api.Aggregate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,7 +39,7 @@ public class ReportingControllerTest extends TestBase {
         testSuiteExecutionRepository);
 
     AggregatedResultsReporter aggregatedResultsReporter = new AggregatedResultsReporter(
-        testSuiteExecutionRepository, new ReportConverter());
+        testSuiteExecutionRepository);
 
     sut = new ReportingController(latestResultsReporter, aggregatedResultsReporter);
   }

@@ -49,7 +49,7 @@ public class ReportingController {
    * @return an aggregated report over test suite executions
    */
   @PostMapping("/aggregated")
-  public ResponseEntity<AggregatedReport> getLatestLabelResults(
+  public ResponseEntity<AggregatedReport> aggregatedReport(
       @RequestBody ReportRequest reportRequest) {
 
     AggregatedReport report = aggregatedResultsReporter

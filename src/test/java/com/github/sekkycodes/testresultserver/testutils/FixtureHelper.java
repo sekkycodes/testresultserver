@@ -12,9 +12,11 @@ import java.util.Collections;
  */
 public class FixtureHelper {
 
+  public static long DEFAULT_TIMESTAMP = 1613729996246L;
+
   public static TestSuiteExecution buildTestSuiteExecution() {
     return TestSuiteExecution.builder()
-        .id(new TimeNamePK("dummy test suite", System.currentTimeMillis()))
+        .id(new TimeNamePK("dummy test suite", DEFAULT_TIMESTAMP))
         .duration(1000L)
         .project("myDummyProject")
         .testType("Unit")
@@ -28,7 +30,7 @@ public class FixtureHelper {
 
   public static TestCaseExecution buildTestCaseExecution() {
     return TestCaseExecution.builder()
-        .id(new TimeNamePK("dummy test case", System.currentTimeMillis()))
+        .id(new TimeNamePK("dummy test case", DEFAULT_TIMESTAMP))
         .suiteName("dummy test suite")
         .result(TestResult.PASSED)
         .duration(200L)
@@ -37,7 +39,7 @@ public class FixtureHelper {
 
   public static ImportRequest buildImportRequest() {
     return ImportRequest.builder()
-        .executionTimeStamp(1613729996246L)
+        .executionTimeStamp(DEFAULT_TIMESTAMP)
         .project("myDummyProject")
         .testType("Unit")
         .labels(Collections.singletonList("label01"))
