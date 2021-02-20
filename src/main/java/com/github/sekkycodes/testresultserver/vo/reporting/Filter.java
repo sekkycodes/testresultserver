@@ -33,10 +33,10 @@ public class Filter {
   String label;
 
   /**
-   * Take the last x number of suite executions. If the aggregation criteria DATE is set, then the
-   * last x days will be filtered for instead.
+   * Take only the last x days of suite executions - if set to 0 all suites will be included in the
+   * report calculation
    */
-  int latestEntries;
+  int daysBack;
 
   @JsonPOJOBuilder(withPrefix = "")
   public static class FilterBuilder {

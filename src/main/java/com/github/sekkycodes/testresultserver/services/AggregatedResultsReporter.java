@@ -11,6 +11,11 @@ import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
 import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
 import com.google.common.base.Strings;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,11 +36,14 @@ import org.springframework.stereotype.Service;
 public class AggregatedResultsReporter {
 
   private final TestSuiteExecutionRepository testSuiteExecutionRepository;
+  private final Clock clock;
 
   @Autowired
-  public AggregatedResultsReporter(TestSuiteExecutionRepository testSuiteExecutionRepository) {
+  public AggregatedResultsReporter(TestSuiteExecutionRepository testSuiteExecutionRepository,
+      Clock clock) {
 
     this.testSuiteExecutionRepository = Objects.requireNonNull(testSuiteExecutionRepository);
+    this.clock = Objects.requireNonNull(clock);
   }
 
   /**
@@ -52,7 +60,7 @@ public class AggregatedResultsReporter {
     List<TestSuiteExecutionVO> suiteExecutions = getSuiteExecutionsByFilter(filter)
         .stream().map(TestSuiteExecution::toValueObject).collect(Collectors.toList());
 
-    List<TestSuiteExecutionVO> limited = limit(suiteExecutions, filter, aggregateBys);
+    List<TestSuiteExecutionVO> limited = limit(suiteExecutions, filter.getDaysBack());
 
     AggregatedEntry aggregated = AggregatedEntry.builder()
         .aggregatedByValues(new ArrayList<>())
@@ -88,20 +96,16 @@ public class AggregatedResultsReporter {
     return testSuiteExecutionRepository.findAll(Specification.where(spec));
   }
 
-  private List<TestSuiteExecutionVO> limit(List<TestSuiteExecutionVO> suiteExecutions,
-      Filter filter,
-      List<AggregateBy> aggregateBys) {
+  private List<TestSuiteExecutionVO> limit(List<TestSuiteExecutionVO> suites, int daysBack) {
 
-    if (filter.getLatestEntries() > 0) {
-
-      if (aggregateBys.contains(AggregateBy.DATE)) {
-        // TODO: limit days
-      } else {
-        // TODO: limit entries
-      }
+    if (daysBack <= 0) {
+      return suites;
     }
 
-    return suiteExecutions;
+    return suites.stream()
+        .filter(x -> Instant.ofEpochMilli(x.getIdTime())
+                .isAfter(clock.instant().minus(daysBack, ChronoUnit.DAYS)))
+        .collect(Collectors.toList());
   }
 
   private List<AggregatedEntry> aggregate(List<AggregatedEntry> entries, AggregateBy aggregateBys) {
@@ -135,7 +139,7 @@ public class AggregatedResultsReporter {
     for (AggregatedEntry entry : entries) {
       Map<String, List<TestSuiteExecutionVO>> grouped = entry.getOriginal().stream()
           .collect(Collectors.groupingBy(TestSuiteExecutionVO::getTestType));
-      for(Map.Entry<String, List<TestSuiteExecutionVO>> groupedEntry : grouped.entrySet()) {
+      for (Map.Entry<String, List<TestSuiteExecutionVO>> groupedEntry : grouped.entrySet()) {
         List<String> aggregatedByValues = new ArrayList<>(entry.getAggregatedByValues());
         aggregatedByValues.add(groupedEntry.getKey());
         AggregatedEntry newEntry = AggregatedEntry.builder()

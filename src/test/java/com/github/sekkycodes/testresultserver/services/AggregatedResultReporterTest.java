@@ -12,10 +12,16 @@ import com.github.sekkycodes.testresultserver.vo.reporting.AggregateBy;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
 import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -28,11 +34,11 @@ class AggregatedResultReporterTest extends TestBase {
 
   private AggregatedResultsReporter sut;
 
-  private List<TestSuiteExecution> testSuiteList;
   private TestSuiteExecution unitTestSuite1;
   private TestSuiteExecution unitTestSuite2;
   private TestSuiteExecution integrationTestSuite1;
-  private AtomicInteger addedTestSuites = new AtomicInteger(1000);
+
+  private final AtomicInteger addedTestSuites = new AtomicInteger(1000);
 
   private static final String DUMMY_PROJECT = "project01";
 
@@ -41,7 +47,7 @@ class AggregatedResultReporterTest extends TestBase {
 
   @BeforeEach
   void beforeEach() {
-    testSuiteList = new ArrayList<>();
+    List<TestSuiteExecution> testSuiteList = new ArrayList<>();
     unitTestSuite1 = createDummyTest("Unit");
     unitTestSuite2 = createDummyTest("Unit");
     integrationTestSuite1 = createDummyTest("Integration");
@@ -52,7 +58,7 @@ class AggregatedResultReporterTest extends TestBase {
     when(testSuiteExecutionRepository.findAll(Mockito.<Specification<TestSuiteExecution>>any()))
         .thenReturn(testSuiteList);
 
-    sut = new AggregatedResultsReporter(testSuiteExecutionRepository);
+    sut = new AggregatedResultsReporter(testSuiteExecutionRepository, FixtureHelper.FIXED_CLOCK);
   }
 
   @Nested
@@ -108,6 +114,44 @@ class AggregatedResultReporterTest extends TestBase {
       assertThat(unitEntry.getTestCasesWithError())
           .isEqualTo(
               unitTestSuite1.getTestCasesWithError() + unitTestSuite2.getTestCasesWithError());
+    }
+
+    @Test
+    void considersOnlyRecentResultsWhenFilterIsConfiguredTo() {
+      // arrange
+      TestSuiteExecution tooOldTestSuite = createDummyTest("Unit");
+      // set suite execution back 6 days
+      tooOldTestSuite.setId(new TimeNamePK(UUID.randomUUID().toString(),
+          FixtureHelper.FIXED_CLOCK.instant().minus(6, ChronoUnit.DAYS).toEpochMilli()));
+
+      TestSuiteExecution newTestSuite = createDummyTest("Unit");
+      // set suite execution back 4 days
+      newTestSuite.setId(new TimeNamePK(UUID.randomUUID().toString(),
+          FixtureHelper.FIXED_CLOCK.instant().minus(4, ChronoUnit.DAYS).toEpochMilli()));
+
+      List<TestSuiteExecution> suiteExecutions = new ArrayList<>();
+      suiteExecutions.add(tooOldTestSuite);
+      suiteExecutions.add(newTestSuite);
+      when(testSuiteExecutionRepository.findAll(Mockito.<Specification<TestSuiteExecution>>any()))
+          .thenReturn(suiteExecutions);
+
+      Filter filter = Filter.builder()
+          .daysBack(5)
+          .build();
+
+      // act
+      AggregatedReport result = sut
+          .report(filter, Collections.singletonList(AggregateBy.TEST_TYPE));
+
+      // assert
+      AggregatedReportEntry unitEntry = getEntryByAggregatedDimensionValue(result.getEntries(), 0,
+          tooOldTestSuite.getTestType());
+      boolean tooOldSuiteFound = unitEntry.getTestSuiteExecutionIds().stream()
+          .anyMatch(e -> e.getKey().equals(tooOldTestSuite.getId().getName()));
+      assertThat(tooOldSuiteFound).isFalse();
+      boolean newSuiteFound = unitEntry.getTestSuiteExecutionIds().stream()
+          .anyMatch(e -> e.getKey().equals(newTestSuite.getId().getName()));
+      assertThat(newSuiteFound).isTrue();
     }
 
     private AggregatedReportEntry getEntryByAggregatedDimensionValue(

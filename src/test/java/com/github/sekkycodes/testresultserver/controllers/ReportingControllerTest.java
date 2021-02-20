@@ -39,7 +39,7 @@ public class ReportingControllerTest extends TestBase {
         testSuiteExecutionRepository);
 
     AggregatedResultsReporter aggregatedResultsReporter = new AggregatedResultsReporter(
-        testSuiteExecutionRepository);
+        testSuiteExecutionRepository, FixtureHelper.FIXED_CLOCK);
 
     sut = new ReportingController(latestResultsReporter, aggregatedResultsReporter);
   }
