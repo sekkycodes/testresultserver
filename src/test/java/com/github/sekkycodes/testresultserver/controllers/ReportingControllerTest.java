@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import com.github.sekkycodes.testresultserver.TestBase;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
+import com.github.sekkycodes.testresultserver.services.AggregatedResultsReporter;
 import com.github.sekkycodes.testresultserver.services.LatestResultsReporter;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
@@ -37,7 +38,10 @@ public class ReportingControllerTest extends TestBase {
     LatestResultsReporter latestResultsReporter = new LatestResultsReporter(
         testSuiteExecutionRepository);
 
-    sut = new ReportingController(latestResultsReporter);
+    AggregatedResultsReporter aggregatedResultsReporter = new AggregatedResultsReporter(
+        testSuiteExecutionRepository, FixtureHelper.FIXED_CLOCK);
+
+    sut = new ReportingController(latestResultsReporter, aggregatedResultsReporter);
   }
 
   @Nested

@@ -1,10 +1,12 @@
-package com.github.sekkycodes.testresultserver.repositories;
+package com.github.sekkycodes.testresultserver;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.exceptions.ImportException;
+import com.github.sekkycodes.testresultserver.repositories.TestCaseExecutionRepository;
+import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.services.FileImportService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -12,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FileImportIT {
+class TestFileImportIT {
 
   @Autowired
-  FileImportService sut;
+  FileImportService fileImportService;
 
   @Autowired
   TestSuiteExecutionRepository testSuiteExecutionRepository;
@@ -29,7 +31,7 @@ class FileImportIT {
   @Test
   void importsTestSuiteAndTestCasesFromJunitXml() throws ImportException {
     // When importing a JUnit XML
-    sut.importJunitFile(() -> this.getClass().getResourceAsStream("/junit.xml"));
+    fileImportService.importJunitFile(() -> this.getClass().getResourceAsStream("/junit.xml"));
 
     // Then a new test suite execution is created
     assertThat(testSuiteExecutionRepository.count()).isEqualTo(1);

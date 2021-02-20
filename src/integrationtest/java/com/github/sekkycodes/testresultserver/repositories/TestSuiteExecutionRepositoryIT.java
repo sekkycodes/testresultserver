@@ -62,7 +62,8 @@ class TestSuiteExecutionRepositoryIT {
 
     Collection<TestSuiteExecution> result = sut.findLatestResults();
 
-    assertThat(result.size()).isEqualTo(1);
-    assertThat(result.iterator().next().getId().getTime()).isEqualTo(latest.getId().getTime());
+    Optional<TestSuiteExecution> execution = result.stream()
+        .filter(r -> r.getId().equals(latest.getId())).findFirst();
+    assertThat(execution.isPresent()).isTrue();
   }
 }

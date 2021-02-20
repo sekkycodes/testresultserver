@@ -30,6 +30,16 @@ public class TestSuiteExecution {
   TimeNamePK id;
 
   /**
+   * A project identifier which the test suite was executed for
+   */
+  String project;
+
+  /**
+   * Type of test (for example "Unit", "Integration", "E2E")
+   */
+  String testType;
+
+  /**
    * How long the test suite was running until all test cases completed (in milliseconds)
    */
   long duration;
@@ -65,14 +75,16 @@ public class TestSuiteExecution {
    */
   public TestSuiteExecutionVO toValueObject() {
     return TestSuiteExecutionVO.builder()
-        .idName(id.getName())
-        .idTime(id.getTime())
-        .duration(duration)
-        .testCasesTotal(testCasesTotal)
-        .testCasesPassed(testCasesPassed)
-        .testCasesFailed(testCasesFailed)
-        .testCasesSkipped(testCasesSkipped)
-        .testCasesWithError(testCasesWithError)
+        .idName(getId().getName())
+        .idTime(getId().getTime())
+        .project(getProject())
+        .testType(getTestType())
+        .duration(getDuration())
+        .testCasesTotal(getTestCasesTotal())
+        .testCasesPassed(getTestCasesPassed())
+        .testCasesFailed(getTestCasesFailed())
+        .testCasesSkipped(getTestCasesSkipped())
+        .testCasesWithError(getTestCasesWithError())
         .build();
   }
 }

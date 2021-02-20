@@ -1,7 +1,9 @@
-package com.github.sekkycodes.testresultserver.vo;
+package com.github.sekkycodes.testresultserver.vo.importing;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.github.sekkycodes.testresultserver.vo.TestCaseExecutionVO;
+import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Value;
