@@ -31,8 +31,4 @@ public class ImportResult {
    * about that error
    */
   String errorMessage;
-
-  public static ImportResult empty() {
-    return ImportResult.builder().build();
-  }
 }
