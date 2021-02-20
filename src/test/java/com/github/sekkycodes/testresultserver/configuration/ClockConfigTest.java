@@ -3,7 +3,6 @@ package com.github.sekkycodes.testresultserver.configuration;
 import static com.google.common.truth.Truth.assertThat;
 
 import java.time.Clock;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
