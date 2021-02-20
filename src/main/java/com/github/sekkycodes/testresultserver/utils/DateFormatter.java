@@ -1,6 +1,5 @@
 package com.github.sekkycodes.testresultserver.utils;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -9,6 +8,8 @@ import java.time.format.DateTimeFormatter;
  * Utils class for formatting dates
  */
 public class DateFormatter {
+
+  private DateFormatter() {}
 
   /**
    * The pattern used for formatting dates
