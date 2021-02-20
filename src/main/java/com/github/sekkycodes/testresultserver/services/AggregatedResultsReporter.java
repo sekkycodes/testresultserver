@@ -5,6 +5,7 @@ import static com.github.sekkycodes.testresultserver.repositories.TestSuiteExecu
 
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
+import com.github.sekkycodes.testresultserver.utils.DateFormatter;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregateBy;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Value;
@@ -102,7 +104,7 @@ public class AggregatedResultsReporter {
 
     return suites.stream()
         .filter(x -> Instant.ofEpochMilli(x.getIdTime())
-                .isAfter(clock.instant().minus(daysBack, ChronoUnit.DAYS)))
+            .isAfter(clock.instant().minus(daysBack, ChronoUnit.DAYS)))
         .collect(Collectors.toList());
   }
 
@@ -110,19 +112,15 @@ public class AggregatedResultsReporter {
 
     switch (aggregateBys) {
       case DATE:
-        return aggregateByDate(entries);
+        return aggregateByFunction(entries,
+            suite -> DateFormatter.toFormattedDate(suite.getIdTime()));
       case LABEL:
         return aggregateByLabels(entries);
       case TEST_TYPE:
-        return aggregateByTestType(entries);
+        return aggregateByFunction(entries, TestSuiteExecutionVO::getTestType);
       default:
         throw new IllegalStateException("no support for aggregation by: " + aggregateBys.name());
     }
-  }
-
-  private List<AggregatedEntry> aggregateByDate(List<AggregatedEntry> entries) {
-    // TODO
-    return entries;
   }
 
   private List<AggregatedEntry> aggregateByLabels(List<AggregatedEntry> entries) {
@@ -130,13 +128,14 @@ public class AggregatedResultsReporter {
     return entries;
   }
 
-  private List<AggregatedEntry> aggregateByTestType(List<AggregatedEntry> entries) {
+  private List<AggregatedEntry> aggregateByFunction(List<AggregatedEntry> entries,
+      Function<TestSuiteExecutionVO, String> groupingFunction) {
 
     List<AggregatedEntry> result = new ArrayList<>();
 
     for (AggregatedEntry entry : entries) {
       Map<String, List<TestSuiteExecutionVO>> grouped = entry.getOriginal().stream()
-          .collect(Collectors.groupingBy(TestSuiteExecutionVO::getTestType));
+          .collect(Collectors.groupingBy(groupingFunction));
       for (Map.Entry<String, List<TestSuiteExecutionVO>> groupedEntry : grouped.entrySet()) {
         List<String> aggregatedByValues = new ArrayList<>(entry.getAggregatedByValues());
         aggregatedByValues.add(groupedEntry.getKey());

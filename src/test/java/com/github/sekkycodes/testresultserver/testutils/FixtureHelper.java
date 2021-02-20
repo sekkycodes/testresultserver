@@ -4,6 +4,7 @@ import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
 import com.github.sekkycodes.testresultserver.domain.TestResult;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
+import com.github.sekkycodes.testresultserver.utils.DateFormatter;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
 import java.time.Clock;
 import java.time.Instant;
@@ -16,6 +17,8 @@ import java.util.Collections;
 public class FixtureHelper {
 
   public static final Instant FIXED_TIMESTAMP = Instant.parse("2020-01-29T10:00:00.00Z");
+  public static final String TODAY_DATE = DateFormatter
+      .toFormattedDate(FIXED_TIMESTAMP.toEpochMilli());
   public static final Clock FIXED_CLOCK = Clock.fixed(FIXED_TIMESTAMP, ZoneId.systemDefault());
 
   public static TestSuiteExecution buildTestSuiteExecution() {

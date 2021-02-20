@@ -8,15 +8,13 @@ import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
+import com.github.sekkycodes.testresultserver.utils.DateFormatter;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregateBy;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
 import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +57,56 @@ class AggregatedResultReporterTest extends TestBase {
         .thenReturn(testSuiteList);
 
     sut = new AggregatedResultsReporter(testSuiteExecutionRepository, FixtureHelper.FIXED_CLOCK);
+  }
+
+  @Nested
+  class AggregateByDate {
+
+    @Test
+    void aggregatesByDate() {
+      // arrange
+      TestSuiteExecution suiteToday1 = createExecutionAtTime(
+          FixtureHelper.FIXED_TIMESTAMP.toEpochMilli());
+      TestSuiteExecution suiteToday2 = createExecutionAtTime(
+          FixtureHelper.FIXED_TIMESTAMP.minus(1, ChronoUnit.HOURS).toEpochMilli());
+      TestSuiteExecution suiteYesterday1 = createExecutionAtTime(
+          FixtureHelper.FIXED_TIMESTAMP.minus(1, ChronoUnit.DAYS).toEpochMilli());
+      List<TestSuiteExecution> testSuiteList = new ArrayList<>();
+      testSuiteList.add(suiteToday1);
+      testSuiteList.add(suiteToday2);
+      testSuiteList.add(suiteYesterday1);
+
+      when(testSuiteExecutionRepository.findAll(Mockito.<Specification<TestSuiteExecution>>any()))
+          .thenReturn(testSuiteList);
+
+      // act
+      AggregatedReport result = sut
+          .report(Filter.builder().build(), Collections.singletonList(AggregateBy.DATE));
+
+      // assert
+      assertThat(result.getAggregationDimensions().size()).isEqualTo(1);
+      assertThat(result.getAggregationDimensions().get(0)).isEqualTo(AggregateBy.DATE);
+      assertThat(result.getEntries().size()).isEqualTo(2);
+      AggregatedReportEntry todayEntry =
+          getEntryByAggregatedDimensionValue(result.getEntries(), 0, FixtureHelper.TODAY_DATE);
+      assertThat(todayEntry.getTestSuiteExecutionIds().size()).isEqualTo(2);
+      AggregatedReportEntry yesterdayEntry =
+          getEntryByAggregatedDimensionValue(result.getEntries(), 0, yesterday());
+      assertThat(yesterdayEntry.getTestSuiteExecutionIds().size()).isEqualTo(1);
+      assertThat(yesterdayEntry.getTestSuiteExecutionIds().get(0).getKey())
+          .isEqualTo(suiteYesterday1.getId().getName());
+    }
+
+    private TestSuiteExecution createExecutionAtTime(long timestamp) {
+      TestSuiteExecution suite = FixtureHelper.buildTestSuiteExecution();
+      suite.setId(new TimeNamePK(UUID.randomUUID().toString(), timestamp));
+      return suite;
+    }
+
+    private String yesterday() {
+      Instant yesterdayInstant = FixtureHelper.FIXED_TIMESTAMP.minus(1, ChronoUnit.DAYS);
+      return DateFormatter.toFormattedDate(yesterdayInstant.toEpochMilli());
+    }
   }
 
   @Nested
@@ -153,20 +201,20 @@ class AggregatedResultReporterTest extends TestBase {
           .anyMatch(e -> e.getKey().equals(newTestSuite.getId().getName()));
       assertThat(newSuiteFound).isTrue();
     }
+  }
 
-    private AggregatedReportEntry getEntryByAggregatedDimensionValue(
-        List<AggregatedReportEntry> entries, int dimension, String value) {
-      Optional<AggregatedReportEntry> entry = entries.stream().filter(e -> {
-        Optional<String> aggrValue = e.getAggregatedByValues().stream().skip(dimension).findFirst();
-        if (aggrValue.isEmpty()) {
-          return false;
-        }
-        return value.equals(aggrValue.get());
-      }).findFirst();
+  private AggregatedReportEntry getEntryByAggregatedDimensionValue(
+      List<AggregatedReportEntry> entries, int dimension, String value) {
+    Optional<AggregatedReportEntry> entry = entries.stream().filter(e -> {
+      Optional<String> aggrValue = e.getAggregatedByValues().stream().skip(dimension).findFirst();
+      if (aggrValue.isEmpty()) {
+        return false;
+      }
+      return value.equals(aggrValue.get());
+    }).findFirst();
 
-      assertThat(entry.isPresent()).isTrue();
-      return entry.get();
-    }
+    assertThat(entry.isPresent()).isTrue();
+    return entry.get();
   }
 
   private TestSuiteExecution createDummyTest(String testType) {
