@@ -110,7 +110,50 @@ class AggregatedResultReporterTest extends TestBase {
   }
 
   @Nested
-  class Report {
+  class AggregateByEnvironment {
+
+    @Test
+    void aggregatesByEnvironment() {
+      // arrange
+      TestSuiteExecution suiteDev1 = createExecutionForEnvironment("dev");
+      TestSuiteExecution suiteDev2 = createExecutionForEnvironment("dev");
+      TestSuiteExecution suiteProd1 = createExecutionForEnvironment("prod");
+      List<TestSuiteExecution> testSuiteList = new ArrayList<>();
+      testSuiteList.add(suiteDev1);
+      testSuiteList.add(suiteDev2);
+      testSuiteList.add(suiteProd1);
+
+      when(testSuiteExecutionRepository.findAll(Mockito.<Specification<TestSuiteExecution>>any()))
+          .thenReturn(testSuiteList);
+
+      // act
+      AggregatedReport result = sut
+          .report(Filter.builder().build(), Collections.singletonList(AggregateBy.ENVIRONMENT));
+
+      // assert
+      assertThat(result.getAggregationDimensions().size()).isEqualTo(1);
+      assertThat(result.getAggregationDimensions().get(0)).isEqualTo(AggregateBy.ENVIRONMENT);
+      assertThat(result.getEntries().size()).isEqualTo(2);
+      AggregatedReportEntry todayEntry =
+          getEntryByAggregatedDimensionValue(result.getEntries(), 0, "dev");
+      assertThat(todayEntry.getTestSuiteExecutionIds().size()).isEqualTo(2);
+      AggregatedReportEntry yesterdayEntry =
+          getEntryByAggregatedDimensionValue(result.getEntries(), 0, "prod");
+      assertThat(yesterdayEntry.getTestSuiteExecutionIds().size()).isEqualTo(1);
+      assertThat(yesterdayEntry.getTestSuiteExecutionIds().get(0).getKey())
+          .isEqualTo(suiteProd1.getId().getName());
+    }
+
+    private TestSuiteExecution createExecutionForEnvironment(String environment) {
+      TestSuiteExecution suite = FixtureHelper.buildTestSuiteExecution();
+      suite.setTestType("E2E");
+      suite.setEnvironment(environment);
+      return suite;
+    }
+  }
+
+  @Nested
+  class AggregateByTestType {
 
     @Test
     void aggregatesByTestType() {
@@ -134,6 +177,10 @@ class AggregatedResultReporterTest extends TestBase {
           result.getEntries(), 0, integrationTestSuite1.getTestType());
       assertThat(integrationEntry.getTestSuiteExecutionIds().size()).isEqualTo(1);
     }
+  }
+
+  @Nested
+  class Report {
 
     @Test
     void sumsUnitTestSuitesInAggregatedResult() {

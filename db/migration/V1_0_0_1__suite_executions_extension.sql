@@ -3,3 +3,6 @@ ALTER TABLE testsuite_executions
 
 ALTER TABLE testsuite_executions
     ADD test_type varchar(255);
+
+ALTER TABLE testsuite_executions
+    ADD environment varchar(255);

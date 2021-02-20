@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Configuration;
 public class ClockConfig {
 
   /**
-   * Creates a new Clock object with the System's default time zone
+   * Creates a new Clock object with the UTC zone
    * @return new Clock instance
    */
   @Bean
   public Clock createClock() {
-    return Clock.systemDefaultZone();
+    return Clock.systemUTC();
   }
 }

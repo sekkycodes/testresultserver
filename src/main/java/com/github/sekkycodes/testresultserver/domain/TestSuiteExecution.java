@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * A specific execution (or run) of a testsuite and all tests therein.
- * An execution is correlated with a result obtained at a specific point in time.
+ * A specific execution (or run) of a testsuite and all tests therein. An execution is correlated
+ * with a result obtained at a specific point in time.
  */
 @Entity
 @Table(name = "testsuite_executions")
@@ -38,6 +38,12 @@ public class TestSuiteExecution {
    * Type of test (for example "Unit", "Integration", "E2E")
    */
   String testType;
+
+  /**
+   * The environment the suite was executed against. Typically this is "local" or "ci" for unit and
+   * integration tests, and (for example) "dev", "test", or "prod" for E2E tests.
+   */
+  String environment;
 
   /**
    * How long the test suite was running until all test cases completed (in milliseconds)
@@ -71,6 +77,7 @@ public class TestSuiteExecution {
 
   /**
    * Converts the domain object into an immutable value object
+   *
    * @return mapped value object
    */
   public TestSuiteExecutionVO toValueObject() {
@@ -79,6 +86,7 @@ public class TestSuiteExecution {
         .idTime(getId().getTime())
         .project(getProject())
         .testType(getTestType())
+        .environment(getEnvironment())
         .duration(getDuration())
         .testCasesTotal(getTestCasesTotal())
         .testCasesPassed(getTestCasesPassed())

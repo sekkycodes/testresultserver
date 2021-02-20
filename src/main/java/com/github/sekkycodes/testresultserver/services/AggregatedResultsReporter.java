@@ -114,18 +114,13 @@ public class AggregatedResultsReporter {
       case DATE:
         return aggregateByFunction(entries,
             suite -> DateFormatter.toFormattedDate(suite.getIdTime()));
-      case LABEL:
-        return aggregateByLabels(entries);
+      case ENVIRONMENT:
+        return aggregateByFunction(entries, TestSuiteExecutionVO::getEnvironment);
       case TEST_TYPE:
         return aggregateByFunction(entries, TestSuiteExecutionVO::getTestType);
       default:
         throw new IllegalStateException("no support for aggregation by: " + aggregateBys.name());
     }
-  }
-
-  private List<AggregatedEntry> aggregateByLabels(List<AggregatedEntry> entries) {
-    // TODO
-    return entries;
   }
 
   private List<AggregatedEntry> aggregateByFunction(List<AggregatedEntry> entries,

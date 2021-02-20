@@ -8,7 +8,7 @@ import com.github.sekkycodes.testresultserver.utils.DateFormatter;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Collections;
 
 /**
@@ -19,7 +19,7 @@ public class FixtureHelper {
   public static final Instant FIXED_TIMESTAMP = Instant.parse("2020-01-29T10:00:00.00Z");
   public static final String TODAY_DATE = DateFormatter
       .toFormattedDate(FIXED_TIMESTAMP.toEpochMilli());
-  public static final Clock FIXED_CLOCK = Clock.fixed(FIXED_TIMESTAMP, ZoneId.systemDefault());
+  public static final Clock FIXED_CLOCK = Clock.fixed(FIXED_TIMESTAMP, ZoneOffset.UTC);
 
   public static TestSuiteExecution buildTestSuiteExecution() {
     return TestSuiteExecution.builder()
@@ -27,6 +27,7 @@ public class FixtureHelper {
         .duration(1000L)
         .project("myDummyProject")
         .testType("Unit")
+        .environment("local")
         .testCasesTotal(10)
         .testCasesPassed(1)
         .testCasesFailed(2)
@@ -49,6 +50,7 @@ public class FixtureHelper {
         .executionTimeStamp(FIXED_TIMESTAMP.toEpochMilli())
         .project("myDummyProject")
         .testType("Unit")
+        .environment("local")
         .labels(Collections.singletonList("label01"))
         .build();
   }

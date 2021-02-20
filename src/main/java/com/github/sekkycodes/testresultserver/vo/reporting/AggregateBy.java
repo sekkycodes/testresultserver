@@ -6,11 +6,6 @@ package com.github.sekkycodes.testresultserver.vo.reporting;
 public enum AggregateBy {
 
   /**
-   * Aggregates by label attached to suite
-   */
-  LABEL,
-
-  /**
    * Aggregates by date of suite execution
    */
   DATE,
@@ -18,5 +13,10 @@ public enum AggregateBy {
   /**
    * Aggregates by test type
    */
-  TEST_TYPE
+  TEST_TYPE,
+
+  /**
+   * Aggregates by the environment the test suite was executed again
+   */
+  ENVIRONMENT
 }

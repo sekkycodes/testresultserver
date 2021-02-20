@@ -14,6 +14,7 @@ public class TestSuiteExecutionVO {
   long idTime;
   String project;
   String testType;
+  String environment;
   long duration;
   int testCasesTotal;
   int testCasesPassed;
