@@ -5,25 +5,15 @@ import static com.google.common.truth.Truth.assertThat;
 import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.exceptions.ImportException;
-import com.github.sekkycodes.testresultserver.repositories.TestCaseExecutionRepository;
-import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.services.FileImportService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class TestFileImportIT {
+class TestFileImportIT extends IntegrationTestBase {
 
   @Autowired
   FileImportService fileImportService;
-
-  @Autowired
-  TestSuiteExecutionRepository testSuiteExecutionRepository;
-
-  @Autowired
-  TestCaseExecutionRepository testCaseExecutionRepository;
 
   // from junit.xml
   private static final String SUITE_NAME = "com.github.sekkycodes.testresultserver.repositories.TestSuiteRepositoryIT";
