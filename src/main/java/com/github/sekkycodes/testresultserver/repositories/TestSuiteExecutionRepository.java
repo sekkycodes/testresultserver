@@ -5,25 +5,18 @@ import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
  * JPA Repository for TestSuiteExecutions
  */
 public interface TestSuiteExecutionRepository extends
-    JpaRepository<TestSuiteExecution, TimeNamePK>, JpaSpecificationExecutor<TestSuiteExecution> {
+    MongoRepository<TestSuiteExecution, TimeNamePK>, QueryDslPredicateExecutor<TestSuiteExecution> {
 
   Optional<TestSuiteExecution> findByIdNameAndIdTime(String name, long time);
 
   List<TestSuiteExecution> findAllByIdName(String name);
 
-  @Query("SELECT tse "
-      + " FROM TestSuiteExecution tse "
-      + " WHERE tse.id.time = "
-      + "   (SELECT MAX(tse1.id.time) FROM TestSuiteExecution tse1 WHERE tse1.id.name = tse.id.name) ")
   Collection<TestSuiteExecution> findLatestResults();
 
   /**
