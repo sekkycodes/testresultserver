@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.stereotype.Repository;
 
 /**
- * JPA Repository for TestSuiteExecutions
+ * Spring Data Mongo Repository for TestSuiteExecutions
  */
+@Repository
 public interface TestSuiteExecutionRepository extends
     MongoRepository<TestSuiteExecution, TimeNamePK>, QuerydslPredicateExecutor<TestSuiteExecution> {
 

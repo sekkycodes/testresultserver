@@ -23,7 +23,7 @@ To see the API documentation open /swagger-ui.html on your running instance.
 To set up mongodb with docker run the following commands:
 
     docker pull mongo
-    docker run --name testresultserver-test -d mongo:4.4.4
+    docker run -p 27017:27017 --name trs-mongo -d mongo:4.4.4
 
 ## Code Style
 
