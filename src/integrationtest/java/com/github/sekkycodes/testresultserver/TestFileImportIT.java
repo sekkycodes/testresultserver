@@ -1,16 +1,17 @@
 package com.github.sekkycodes.testresultserver;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.services.FileImportService;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class TestFileImportIT extends IntegrationTestBase {
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+
+class TestFileImportIT extends IntegrationTestBase{
 
   @Autowired
   FileImportService fileImportService;

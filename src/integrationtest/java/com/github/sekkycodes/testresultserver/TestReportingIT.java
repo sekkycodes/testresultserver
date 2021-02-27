@@ -1,11 +1,8 @@
 package com.github.sekkycodes.testresultserver;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import com.github.sekkycodes.testresultserver.controllers.ReportingController;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
-import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
 import com.github.sekkycodes.testresultserver.utils.DateFormatter;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
@@ -14,18 +11,16 @@ import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
 import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
 import com.github.sekkycodes.testresultserver.vo.reporting.ReportRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class TestReportingIT extends IntegrationTestBase {
 
@@ -33,14 +28,6 @@ class TestReportingIT extends IntegrationTestBase {
 
   @Autowired
   ReportingController reportingController;
-
-  @Autowired
-  TestSuiteExecutionRepository testSuiteExecutionRepository;
-
-  @AfterEach
-  void afterEach() {
-    testSuiteExecutionRepository.deleteAll();
-  }
 
   @Nested
   class AggregateByTestType {
