@@ -3,9 +3,7 @@ package com.github.sekkycodes.testresultserver.repositories;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
-import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
@@ -51,19 +49,5 @@ class TestSuiteExecutionRepositoryIT {
 
     assertThat(result.isEmpty()).isFalse();
     assertThat(result.get(0).getId().getName()).isEqualTo(storedExecution.getId().getName());
-  }
-
-  @Test
-  void findsLatestTestSuiteExecutionPerSuite() {
-    TestSuiteExecution latest = FixtureHelper.buildTestSuiteExecution();
-    latest.setId(
-        new TimeNamePK(storedExecution.getId().getName(), storedExecution.getId().getTime() + 10L));
-    sut.save(latest);
-
-    Collection<TestSuiteExecution> result = sut.findLatestResults();
-
-    Optional<TestSuiteExecution> execution = result.stream()
-        .filter(r -> r.getId().equals(latest.getId())).findFirst();
-    assertThat(execution.isPresent()).isTrue();
   }
 }
