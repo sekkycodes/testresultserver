@@ -1,21 +1,21 @@
 package com.github.sekkycodes.testresultserver.domain;
 
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * A specific execution (or run) of a testsuite and all tests therein. An execution is correlated
  * with a result obtained at a specific point in time.
  */
-@Entity
-@Table(name = "testsuite_executions")
+@Document("test-suite-execution")
+@QueryEntity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -26,7 +26,7 @@ public class TestSuiteExecution {
   /**
    * Unique identifier of the test suite execution by suite name and time of execution
    */
-  @EmbeddedId
+  @Id
   TimeNamePK id;
 
   /**

@@ -1,8 +1,6 @@
 package com.github.sekkycodes.testresultserver.services;
 
-import static com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository.hasProject;
-import static com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository.hasTestType;
-
+import com.github.sekkycodes.testresultserver.domain.QTestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.utils.DateFormatter;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 /**
@@ -83,17 +80,18 @@ public class AggregatedResultsReporter {
   }
 
   private List<TestSuiteExecution> getSuiteExecutionsByFilter(Filter filter) {
-    Specification<TestSuiteExecution> spec = Specification.where(null);
+
+    QTestSuiteExecution qTestSuiteExecution = new QTestSuiteExecution("test-suite-execution");
 
     if (!Strings.isNullOrEmpty(filter.getProjectName())) {
-      spec = spec.and(hasProject(filter.getProjectName()));
+      qTestSuiteExecution.project.eq(filter.getProjectName());
     }
 
     if (!Strings.isNullOrEmpty(filter.getTestType())) {
-      spec = spec.and(hasTestType(filter.getTestType()));
+      qTestSuiteExecution.testType.eq(filter.getTestType());
     }
 
-    return testSuiteExecutionRepository.findAll(Specification.where(spec));
+    return testSuiteExecutionRepository.findAll();
   }
 
   private List<TestSuiteExecutionVO> limit(List<TestSuiteExecutionVO> suites, int daysBack) {

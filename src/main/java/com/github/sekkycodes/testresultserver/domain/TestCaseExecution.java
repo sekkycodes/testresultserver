@@ -1,23 +1,19 @@
 package com.github.sekkycodes.testresultserver.domain;
 
 import com.github.sekkycodes.testresultserver.vo.TestCaseExecutionVO;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * A specific execution (or run) of a test case.
  * An execution is correlated with a result obtained at a specific point in time.
  */
-@Entity
-@Table(name = "testcase_executions")
+@Document("test_case_executions")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -28,7 +24,7 @@ public class TestCaseExecution {
   /**
    * Unique identifier of the test case execution by test case name and time of execution
    */
-  @EmbeddedId
+  @Id
   TimeNamePK id;
 
   /**
@@ -40,7 +36,6 @@ public class TestCaseExecution {
   /**
    * Result of the test case run
    */
-  @Enumerated(EnumType.STRING)
   TestResult result;
 
   /**
