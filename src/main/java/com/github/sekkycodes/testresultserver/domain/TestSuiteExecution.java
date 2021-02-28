@@ -2,11 +2,7 @@ package com.github.sekkycodes.testresultserver.domain;
 
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import com.querydsl.core.annotations.QueryEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * A specific execution (or run) of a testsuite and all tests therein. An execution is correlated
  * with a result obtained at a specific point in time.
  */
-@Document("test-suite-execution")
+@Document("test-suite-executions")
 @QueryEntity
 @AllArgsConstructor
 @NoArgsConstructor
