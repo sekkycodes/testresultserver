@@ -7,8 +7,6 @@ import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.junit.Testsuite;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLStreamException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

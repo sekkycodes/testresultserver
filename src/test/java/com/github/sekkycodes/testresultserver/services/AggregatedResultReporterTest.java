@@ -13,6 +13,7 @@ import com.github.sekkycodes.testresultserver.vo.reporting.AggregateBy;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
 import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
+import com.querydsl.core.types.Predicate;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.data.jpa.domain.Specification;
 
 class AggregatedResultReporterTest extends TestBase {
 
@@ -53,7 +53,7 @@ class AggregatedResultReporterTest extends TestBase {
     testSuiteList.add(unitTestSuite2);
     testSuiteList.add(integrationTestSuite1);
 
-    when(testSuiteExecutionRepository.findAll(Mockito.<Specification<TestSuiteExecution>>any()))
+    when(testSuiteExecutionRepository.findAll(Mockito.<Predicate>any()))
         .thenReturn(testSuiteList);
 
     sut = new AggregatedResultsReporter(testSuiteExecutionRepository, FixtureHelper.FIXED_CLOCK);
@@ -76,7 +76,7 @@ class AggregatedResultReporterTest extends TestBase {
       testSuiteList.add(suiteToday2);
       testSuiteList.add(suiteYesterday1);
 
-      when(testSuiteExecutionRepository.findAll(Mockito.<Specification<TestSuiteExecution>>any()))
+      when(testSuiteExecutionRepository.findAll(Mockito.<Predicate>any()))
           .thenReturn(testSuiteList);
 
       // act
@@ -88,10 +88,10 @@ class AggregatedResultReporterTest extends TestBase {
       assertThat(result.getAggregationDimensions().get(0)).isEqualTo(AggregateBy.DATE);
       assertThat(result.getEntries().size()).isEqualTo(2);
       AggregatedReportEntry todayEntry =
-          getEntryByAggregatedDimensionValue(result.getEntries(), 0, FixtureHelper.TODAY_DATE);
+          getEntryByFirstAggregatedDimensionValue(result.getEntries(), FixtureHelper.TODAY_DATE);
       assertThat(todayEntry.getTestSuiteExecutionIds().size()).isEqualTo(2);
       AggregatedReportEntry yesterdayEntry =
-          getEntryByAggregatedDimensionValue(result.getEntries(), 0, yesterday());
+          getEntryByFirstAggregatedDimensionValue(result.getEntries(), yesterday());
       assertThat(yesterdayEntry.getTestSuiteExecutionIds().size()).isEqualTo(1);
       assertThat(yesterdayEntry.getTestSuiteExecutionIds().get(0).getKey())
           .isEqualTo(suiteYesterday1.getId().getName());
@@ -123,7 +123,7 @@ class AggregatedResultReporterTest extends TestBase {
       testSuiteList.add(suiteDev2);
       testSuiteList.add(suiteProd1);
 
-      when(testSuiteExecutionRepository.findAll(Mockito.<Specification<TestSuiteExecution>>any()))
+      when(testSuiteExecutionRepository.findAll(Mockito.<Predicate>any()))
           .thenReturn(testSuiteList);
 
       // act
@@ -135,10 +135,10 @@ class AggregatedResultReporterTest extends TestBase {
       assertThat(result.getAggregationDimensions().get(0)).isEqualTo(AggregateBy.ENVIRONMENT);
       assertThat(result.getEntries().size()).isEqualTo(2);
       AggregatedReportEntry todayEntry =
-          getEntryByAggregatedDimensionValue(result.getEntries(), 0, "dev");
+          getEntryByFirstAggregatedDimensionValue(result.getEntries(), "dev");
       assertThat(todayEntry.getTestSuiteExecutionIds().size()).isEqualTo(2);
       AggregatedReportEntry yesterdayEntry =
-          getEntryByAggregatedDimensionValue(result.getEntries(), 0, "prod");
+          getEntryByFirstAggregatedDimensionValue(result.getEntries(), "prod");
       assertThat(yesterdayEntry.getTestSuiteExecutionIds().size()).isEqualTo(1);
       assertThat(yesterdayEntry.getTestSuiteExecutionIds().get(0).getKey())
           .isEqualTo(suiteProd1.getId().getName());
@@ -170,11 +170,11 @@ class AggregatedResultReporterTest extends TestBase {
       assertThat(result.getAggregationDimensions().size()).isEqualTo(1);
       assertThat(result.getAggregationDimensions().get(0)).isEqualTo(AggregateBy.TEST_TYPE);
       assertThat(result.getEntries().size()).isEqualTo(2);
-      AggregatedReportEntry unitEntry = getEntryByAggregatedDimensionValue(result.getEntries(), 0,
+      AggregatedReportEntry unitEntry = getEntryByFirstAggregatedDimensionValue(result.getEntries(),
           unitTestSuite1.getTestType());
       assertThat(unitEntry.getTestSuiteExecutionIds().size()).isEqualTo(2);
-      AggregatedReportEntry integrationEntry = getEntryByAggregatedDimensionValue(
-          result.getEntries(), 0, integrationTestSuite1.getTestType());
+      AggregatedReportEntry integrationEntry = getEntryByFirstAggregatedDimensionValue(
+          result.getEntries(), integrationTestSuite1.getTestType());
       assertThat(integrationEntry.getTestSuiteExecutionIds().size()).isEqualTo(1);
     }
   }
@@ -194,7 +194,7 @@ class AggregatedResultReporterTest extends TestBase {
           .report(filter, Collections.singletonList(AggregateBy.TEST_TYPE));
 
       // assert
-      AggregatedReportEntry unitEntry = getEntryByAggregatedDimensionValue(result.getEntries(), 0,
+      AggregatedReportEntry unitEntry = getEntryByFirstAggregatedDimensionValue(result.getEntries(),
           unitTestSuite1.getTestType());
       assertThat(unitEntry.getDuration())
           .isEqualTo(unitTestSuite1.getDuration() + unitTestSuite2.getDuration());
@@ -227,7 +227,7 @@ class AggregatedResultReporterTest extends TestBase {
       List<TestSuiteExecution> suiteExecutions = new ArrayList<>();
       suiteExecutions.add(tooOldTestSuite);
       suiteExecutions.add(newTestSuite);
-      when(testSuiteExecutionRepository.findAll(Mockito.<Specification<TestSuiteExecution>>any()))
+      when(testSuiteExecutionRepository.findAll(Mockito.<Predicate>any()))
           .thenReturn(suiteExecutions);
 
       Filter filter = Filter.builder()
@@ -239,7 +239,7 @@ class AggregatedResultReporterTest extends TestBase {
           .report(filter, Collections.singletonList(AggregateBy.TEST_TYPE));
 
       // assert
-      AggregatedReportEntry unitEntry = getEntryByAggregatedDimensionValue(result.getEntries(), 0,
+      AggregatedReportEntry unitEntry = getEntryByFirstAggregatedDimensionValue(result.getEntries(),
           tooOldTestSuite.getTestType());
       boolean tooOldSuiteFound = unitEntry.getTestSuiteExecutionIds().stream()
           .anyMatch(e -> e.getKey().equals(tooOldTestSuite.getId().getName()));
@@ -250,14 +250,14 @@ class AggregatedResultReporterTest extends TestBase {
     }
   }
 
-  private AggregatedReportEntry getEntryByAggregatedDimensionValue(
-      List<AggregatedReportEntry> entries, int dimension, String value) {
+  private AggregatedReportEntry getEntryByFirstAggregatedDimensionValue(
+      List<AggregatedReportEntry> entries, String value) {
     Optional<AggregatedReportEntry> entry = entries.stream().filter(e -> {
-      Optional<String> aggrValue = e.getAggregatedByValues().stream().skip(dimension).findFirst();
-      if (aggrValue.isEmpty()) {
+      Optional<String> aggregatedValue = e.getAggregatedByValues().stream().skip(0).findFirst();
+      if (aggregatedValue.isEmpty()) {
         return false;
       }
-      return value.equals(aggrValue.get());
+      return value.equals(aggregatedValue.get());
     }).findFirst();
 
     assertThat(entry.isPresent()).isTrue();

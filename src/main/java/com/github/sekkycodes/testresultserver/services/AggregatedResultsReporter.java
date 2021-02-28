@@ -1,8 +1,6 @@
 package com.github.sekkycodes.testresultserver.services;
 
-import static com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository.hasProject;
-import static com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository.hasTestType;
-
+import com.github.sekkycodes.testresultserver.domain.QTestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.utils.DateFormatter;
@@ -12,6 +10,7 @@ import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
 import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
 import com.google.common.base.Strings;
+import com.querydsl.core.BooleanBuilder;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -23,10 +22,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 /**
@@ -39,7 +38,8 @@ public class AggregatedResultsReporter {
   private final Clock clock;
 
   @Autowired
-  public AggregatedResultsReporter(TestSuiteExecutionRepository testSuiteExecutionRepository,
+  public AggregatedResultsReporter(
+      TestSuiteExecutionRepository testSuiteExecutionRepository,
       Clock clock) {
 
     this.testSuiteExecutionRepository = Objects.requireNonNull(testSuiteExecutionRepository);
@@ -83,17 +83,27 @@ public class AggregatedResultsReporter {
   }
 
   private List<TestSuiteExecution> getSuiteExecutionsByFilter(Filter filter) {
-    Specification<TestSuiteExecution> spec = Specification.where(null);
+
+    QTestSuiteExecution qTestSuiteExecution = new QTestSuiteExecution("test-suite-execution");
+    BooleanBuilder booleanBuilder = new BooleanBuilder();
 
     if (!Strings.isNullOrEmpty(filter.getProjectName())) {
-      spec = spec.and(hasProject(filter.getProjectName()));
+      booleanBuilder.and(qTestSuiteExecution.project.eq(filter.getProjectName()));
     }
 
     if (!Strings.isNullOrEmpty(filter.getTestType())) {
-      spec = spec.and(hasTestType(filter.getTestType()));
+      booleanBuilder.and(qTestSuiteExecution.testType.eq(filter.getTestType()));
     }
 
-    return testSuiteExecutionRepository.findAll(Specification.where(spec));
+    Iterable<TestSuiteExecution> matched = testSuiteExecutionRepository
+        .findAll(Objects.requireNonNull(booleanBuilder));
+
+    return StreamSupport.stream(matched.spliterator(), false)
+        .collect(Collectors.toList());
+  }
+
+  private QTestSuiteExecution execution() {
+    return new QTestSuiteExecution("test-suite-execution");
   }
 
   private List<TestSuiteExecutionVO> limit(List<TestSuiteExecutionVO> suites, int daysBack) {

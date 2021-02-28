@@ -12,9 +12,18 @@ To see the API documentation open /swagger-ui.html on your running instance.
 # Development
 
 ## Getting Started
+
 ### Prerequisites
-* [IntelliJ IDEA](https://www.jetbrains.com/de-de/idea/), [Eclipse](https://www.eclipse.org/ide/) or another Java-able IDE
+
+* [IntelliJ IDEA](https://www.jetbrains.com/de-de/idea/), [Eclipse](https://www.eclipse.org/ide/) or
+  another Java-able IDE
 * JDK11
+* [MongoDb Docker](https://hub.docker.com/_/mongo)
+
+To set up mongodb with docker run the following commands:
+
+    docker pull mongo
+    docker run -p 27017:27017 --name trs-mongo -d mongo:4.4.4
 
 ## Code Style
 

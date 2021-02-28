@@ -2,6 +2,7 @@ package com.github.sekkycodes.testresultserver.repositories;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.github.sekkycodes.testresultserver.IntegrationTestBase;
 import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
 import java.util.List;
@@ -10,10 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class TestCaseExecutionRepositoryIT {
+class TestCaseExecutionRepositoryIT extends IntegrationTestBase {
 
   @Autowired
   TestCaseExecutionRepository sut;
