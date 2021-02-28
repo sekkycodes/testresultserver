@@ -102,10 +102,6 @@ public class AggregatedResultsReporter {
         .collect(Collectors.toList());
   }
 
-  private QTestSuiteExecution execution() {
-    return new QTestSuiteExecution("test-suite-execution");
-  }
-
   private List<TestSuiteExecutionVO> limit(List<TestSuiteExecutionVO> suites, int daysBack) {
 
     if (daysBack <= 0) {
