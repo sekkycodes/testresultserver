@@ -1,9 +1,0 @@
-version: '3'
-services:
-  database:
-    image: 'mongo'
-    container_name: 'trs-mongo-ci'
-    environment:
-      - MONGO_INITDB_DATABASE=testresults-test
-    ports:
-      - '27017-27019:27017-27019'
