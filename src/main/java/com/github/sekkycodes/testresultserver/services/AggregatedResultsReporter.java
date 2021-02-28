@@ -10,6 +10,7 @@ import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
 import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
 import com.google.common.base.Strings;
+import com.querydsl.core.BooleanBuilder;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,8 @@ public class AggregatedResultsReporter {
   private final Clock clock;
 
   @Autowired
-  public AggregatedResultsReporter(TestSuiteExecutionRepository testSuiteExecutionRepository,
+  public AggregatedResultsReporter(
+      TestSuiteExecutionRepository testSuiteExecutionRepository,
       Clock clock) {
 
     this.testSuiteExecutionRepository = Objects.requireNonNull(testSuiteExecutionRepository);
@@ -82,16 +85,25 @@ public class AggregatedResultsReporter {
   private List<TestSuiteExecution> getSuiteExecutionsByFilter(Filter filter) {
 
     QTestSuiteExecution qTestSuiteExecution = new QTestSuiteExecution("test-suite-execution");
+    BooleanBuilder booleanBuilder = new BooleanBuilder();
 
     if (!Strings.isNullOrEmpty(filter.getProjectName())) {
-      qTestSuiteExecution.project.eq(filter.getProjectName());
+      booleanBuilder.and(qTestSuiteExecution.project.eq(filter.getProjectName()));
     }
 
     if (!Strings.isNullOrEmpty(filter.getTestType())) {
-      qTestSuiteExecution.testType.eq(filter.getTestType());
+      booleanBuilder.and(qTestSuiteExecution.testType.eq(filter.getTestType()));
     }
 
-    return testSuiteExecutionRepository.findAll();
+    Iterable<TestSuiteExecution> matched = testSuiteExecutionRepository
+        .findAll(Objects.requireNonNull(booleanBuilder));
+
+    return StreamSupport.stream(matched.spliterator(), false)
+        .collect(Collectors.toList());
+  }
+
+  private QTestSuiteExecution execution() {
+    return new QTestSuiteExecution("test-suite-execution");
   }
 
   private List<TestSuiteExecutionVO> limit(List<TestSuiteExecutionVO> suites, int daysBack) {
