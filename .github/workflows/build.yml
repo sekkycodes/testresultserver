@@ -33,7 +33,7 @@ jobs:
       - name: Set up Containers for Testing
         env:
           COMPOSE_FILE: .ci/docker-compose.yml
-        run: docker-compose build
+        run: docker-compose up
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
