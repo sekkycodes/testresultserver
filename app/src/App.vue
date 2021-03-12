@@ -1,15 +1,18 @@
 <template>
-  <div id="app container">
-    <div class="row header">
-      <div class="col-md">
-        <img src="./assets/trs_logo.svg">
+  <div id="app">
+    <header>
+      <div class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container d-flex justify-content-between">
+          <!--<img src="./assets/trs_logo.svg" alt="logo"/> -->
+          <div class="navbar-brand d-flex align-items-center">
+            <strong>Test Result Server</strong>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="row content">
-      <div class="col-md">
-        <Dashboard />
-      </div>
-    </div>
+    </header>
+    <main>
+      <Dashboard />
+    </main>
   </div>
 </template>
 
