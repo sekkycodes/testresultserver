@@ -3,8 +3,8 @@
     <header>
       <div class="navbar navbar-dark bg-dark shadow-sm">
         <div class="container d-flex justify-content-between">
-          <!--<img src="./assets/trs_logo.svg" alt="logo"/> -->
           <div class="navbar-brand d-flex align-items-center">
+            <img id="navbar-logo" src="./assets/trs_logo.svg" alt="logo"/>
             <strong>Test Result Server</strong>
           </div>
         </div>
@@ -26,4 +26,10 @@ export default {
   }
 }
 </script>
+
+<style>
+#navbar-logo {
+  height: 50px;
+}
+</style>
 

@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import lombok.Builder;
+import lombok.Data;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -49,6 +51,8 @@ class ResultImportControllerTest extends TestBase {
   @Mock
   MultipartFile multipartFile;
 
+  RequestParams params;
+
   @BeforeEach
   void beforeEach() throws IOException {
     inputStream = this.getClass().getResourceAsStream("/junit-passed.xml");
@@ -73,6 +77,16 @@ class ResultImportControllerTest extends TestBase {
         testCaseExecutionRepository,
         junitReader,
         junitConverter);
+
+    params = RequestParams.builder()
+        .testType("unit")
+        .environment("dev")
+        .executionTimeStamp(1615553404650L)
+        .file(multipartFile)
+        .project("project01")
+        .labels("label1 label2")
+        .build();
+
     sut = new ResultImportController(fileImportService);
   }
 
@@ -93,8 +107,7 @@ class ResultImportControllerTest extends TestBase {
 
     @Test
     void createsANewSuiteExecution() {
-      ResponseEntity<ImportResult> responseEntity = sut
-          .importJunitResults(multipartFile, importRequest);
+      ResponseEntity<ImportResult> responseEntity = invoke();
 
       assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.CREATED.value());
       assertThat(responseEntity.getBody()).isNotNull();
@@ -107,31 +120,28 @@ class ResultImportControllerTest extends TestBase {
     @Test
     void returnsBadRequestResponseIfFileCannotBeRead() throws ImportException {
       FileImportService fileImportService = mock(FileImportService.class);
-      when(fileImportService.importJunitFile(any())).thenThrow(new ImportException("some error"));
+      when(fileImportService.importJunitFile(any(), any()))
+          .thenThrow(new ImportException("some error"));
       sut = new ResultImportController(fileImportService);
 
-      ResponseEntity<ImportResult> responseEntity = sut
-          .importJunitResults(multipartFile, importRequest);
+      ResponseEntity<ImportResult> responseEntity = invoke();
 
       assertErrorMessage(responseEntity, "some error", HttpStatus.BAD_REQUEST);
     }
 
     @Test
     void returnsBadRequestIfNoFileWasProvided() {
-      ResponseEntity<ImportResult> responseEntity = sut
-          .importJunitResults(null, importRequest);
+      params.setFile(null);
+
+      ResponseEntity<ImportResult> responseEntity = invoke();
 
       assertErrorMessage(responseEntity, ResultImportController.NO_FILE_ERROR_TEXT,
           HttpStatus.BAD_REQUEST);
     }
 
-    @Test
-    void returnsBadRequestIfNoRequestBodyWasProvided() {
-      ResponseEntity<ImportResult> responseEntity = sut
-          .importJunitResults(multipartFile, null);
-
-      assertErrorMessage(responseEntity, ResultImportController.NO_BODY_ERROR_TEXT,
-          HttpStatus.BAD_REQUEST);
+    private ResponseEntity<ImportResult> invoke() {
+      return sut.importJunitResults(params.getFile(), params.getTestType(), params.getProject(),
+          params.getEnvironment(), params.getExecutionTimeStamp(), params.getLabels());
     }
 
     private void assertErrorMessage(ResponseEntity<ImportResult> response,
@@ -141,5 +151,17 @@ class ResultImportControllerTest extends TestBase {
       assertThat(response.getBody()).isNotNull();
       assertThat(response.getBody().getErrorMessage()).isEqualTo(expectedErrorMessage);
     }
+  }
+
+  @Builder(toBuilder = true)
+  @Data
+  private static class RequestParams {
+
+    String testType;
+    String project;
+    String environment;
+    String labels;
+    Long executionTimeStamp;
+    MultipartFile file;
   }
 }

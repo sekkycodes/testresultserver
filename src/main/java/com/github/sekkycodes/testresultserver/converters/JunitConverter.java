@@ -27,11 +27,15 @@ public class JunitConverter {
   /**
    * Converts JUnit Testsuite object to canonical TestSuiteExecution entity
    *
-   * @param junitSuite suite to be converted
+   * @param junitSuite                 suite to be converted
+   * @param fallbackExecutionTimestamp used if the timestamp in the junit suite is not set
    * @return converted suite execution object
    */
-  public TestSuiteExecution toTestSuiteExecution(Testsuite junitSuite) {
-    long executionTimestamp = getExecutionTimeStamp(junitSuite.getTimestamp());
+  public TestSuiteExecution toTestSuiteExecution(Testsuite junitSuite,
+      long fallbackExecutionTimestamp) {
+
+    long executionTimestamp = getExecutionTimeStamp(junitSuite.getTimestamp(),
+        fallbackExecutionTimestamp);
 
     int passed =
         junitSuite.getTests() - junitSuite.getErrors()
@@ -66,19 +70,29 @@ public class JunitConverter {
   }
 
   /**
-   * Falls back to current timestamp if none is set in the junit suite
+   * Falls back to current timestamp if none is set in the junit suite nor the fallback
    *
-   * @param calendar the calendar object which is to be converted to
+   * @param calendar                   the calendar object which is to be converted to
+   * @param fallbackExecutionTimestamp used if calendar is null
    * @return time stamp of the test execution as epoch millis
    */
-  private long getExecutionTimeStamp(XMLGregorianCalendar calendar) {
-    long executionTimestamp = calendar == null
-        ? clock.millis()
-        : calendar.toGregorianCalendar().getTimeInMillis();
+  private long getExecutionTimeStamp(XMLGregorianCalendar calendar,
+      long fallbackExecutionTimestamp) {
 
-    return executionTimestamp == 0
-        ? clock.millis()
-        : executionTimestamp;
+    long executionTimestamp = 0;
+    if (calendar != null) {
+      executionTimestamp = calendar.toGregorianCalendar().getTimeInMillis();
+    }
+
+    if (executionTimestamp == 0) {
+      executionTimestamp = fallbackExecutionTimestamp;
+    }
+
+    if (executionTimestamp == 0) {
+      executionTimestamp = clock.millis();
+    }
+
+    return executionTimestamp;
   }
 
   // time in test suites and cases is given as a floating point number denoting seconds

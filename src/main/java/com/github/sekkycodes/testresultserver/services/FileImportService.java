@@ -7,9 +7,10 @@ import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.junit.Testsuite;
 import com.github.sekkycodes.testresultserver.repositories.TestCaseExecutionRepository;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
-import com.github.sekkycodes.testresultserver.vo.importing.ImportResult;
 import com.github.sekkycodes.testresultserver.vo.TestCaseExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
+import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
+import com.github.sekkycodes.testresultserver.vo.importing.ImportResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -46,10 +47,12 @@ public class FileImportService {
   /**
    * Imports from a JUnit XML input stream.
    *
-   * @param source input stream source of JUnix XML file
+   * @param source  input stream source of JUnix XML file
+   * @param request import request with metadata for the file to import
    * @return value object of saved test suite execution
    */
-  public ImportResult importJunitFile(InputStreamSource source) throws ImportException {
+  public ImportResult importJunitFile(InputStreamSource source, ImportRequest request)
+      throws ImportException {
     InputStream in;
     try {
       in = source.getInputStream();
@@ -58,7 +61,11 @@ public class FileImportService {
     }
 
     Testsuite junitSuite = junitReader.readSuite(in);
-    TestSuiteExecution suite = junitConverter.toTestSuiteExecution(junitSuite);
+    TestSuiteExecution suite = junitConverter
+        .toTestSuiteExecution(junitSuite, request.getExecutionTimeStamp());
+    suite.setEnvironment(request.getEnvironment());
+    suite.setProject(request.getProject());
+    suite.setTestType(request.getTestType());
     TestSuiteExecutionVO suiteVO = testSuiteExecutionRepository.save(suite).toValueObject();
 
     Set<TestCaseExecutionVO> caseExecutionVOs = new HashSet<>();

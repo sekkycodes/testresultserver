@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --port 8081",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@popperjs/core": "^2.9.1",
     "apexcharts": "^3.24.0",
+    "axios": "^0.21.1",
     "bootstrap": "^5.0.0-beta2",
     "core-js": "^3.6.5",
     "jquery": "^3.6.0",

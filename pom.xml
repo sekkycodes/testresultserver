@@ -228,6 +228,9 @@
       <properties>
         <spring.profiles.active>local</spring.profiles.active>
       </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
     </profile>
     <profile>
       <id>prod</id>

@@ -26,10 +26,11 @@ class JunitConverterTest {
 
   private static final long TIME_MILLIS = 1613232242954L;
   private static final long FALLBACK_MILLIS = 1613232212345L;
+  private static final long CURRENT_MILLIS = 1615553404650L;
 
   @BeforeEach
   void beforeEach() {
-    sut = new JunitConverter(Clock.fixed(Instant.ofEpochMilli(FALLBACK_MILLIS), ZoneId.of("UTC")));
+    sut = new JunitConverter(Clock.fixed(Instant.ofEpochMilli(CURRENT_MILLIS), ZoneId.of("UTC")));
   }
 
   @Nested
@@ -44,7 +45,7 @@ class JunitConverterTest {
 
     @Test
     void convertsJunitTestsuiteToCanonicalEntity() {
-      TestSuiteExecution result = sut.toTestSuiteExecution(dummySuite);
+      TestSuiteExecution result = sut.toTestSuiteExecution(dummySuite, FALLBACK_MILLIS);
 
       assertThat(result.getId().getName()).isEqualTo("dummyTestSuite");
       assertThat(result.getId().getTime()).isEqualTo(TIME_MILLIS);
@@ -57,10 +58,10 @@ class JunitConverterTest {
     }
 
     @Test
-    void usesCurrentMillisAsFallbackIfNoTimestampIsSet() {
+    void usesFallbackMillisAsFallbackIfNoTimestampIsSet() {
       dummySuite.setTimestamp(null);
 
-      TestSuiteExecution result = sut.toTestSuiteExecution(dummySuite);
+      TestSuiteExecution result = sut.toTestSuiteExecution(dummySuite, FALLBACK_MILLIS);
 
       assertThat(result.getId().getTime()).isEqualTo(FALLBACK_MILLIS);
     }
@@ -71,9 +72,9 @@ class JunitConverterTest {
       calendar.setTimeInMillis(0L);
       dummySuite.setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar));
 
-      TestSuiteExecution result = sut.toTestSuiteExecution(dummySuite);
+      TestSuiteExecution result = sut.toTestSuiteExecution(dummySuite, 0L);
 
-      assertThat(result.getId().getTime()).isEqualTo(FALLBACK_MILLIS);
+      assertThat(result.getId().getTime()).isEqualTo(CURRENT_MILLIS);
     }
 
     private Testsuite buildSuite() throws DatatypeConfigurationException {

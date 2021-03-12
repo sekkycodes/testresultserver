@@ -4,13 +4,13 @@ import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.services.FileImportService;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportResult;
+import java.util.Arrays;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,7 +43,11 @@ public class ResultImportController {
   @PostMapping("/import-junit")
   public ResponseEntity<ImportResult> importJunitResults(
       @RequestParam("file") MultipartFile file,
-      @RequestBody ImportRequest fileImportRequest) {
+      @RequestParam("testType") String testType,
+      @RequestParam("project") String project,
+      @RequestParam("environment") String environment,
+      @RequestParam("executionTimeStamp") long executionTimeStamp,
+      @RequestParam("labels") String labels) {
 
     if (file == null) {
       return new ResponseEntity<>(
@@ -51,14 +55,16 @@ public class ResultImportController {
           HttpStatus.BAD_REQUEST);
     }
 
-    if (fileImportRequest == null) {
-      return new ResponseEntity<>(
-          ImportResult.builder().errorMessage(NO_BODY_ERROR_TEXT).build(),
-          HttpStatus.BAD_REQUEST);
-    }
+    ImportRequest fileImportRequest = ImportRequest.builder()
+        .environment(environment)
+        .project(project)
+        .executionTimeStamp(executionTimeStamp)
+        .testType(testType)
+        .labels(Arrays.asList(labels.split(" ")))
+        .build();
 
     try {
-      ImportResult response = fileImportService.importJunitFile(file);
+      ImportResult response = fileImportService.importJunitFile(file, fileImportRequest);
       return new ResponseEntity<>(response, HttpStatus.CREATED);
     } catch (ImportException e) {
       log.error(e.getMessage(), e);
