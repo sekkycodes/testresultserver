@@ -31,5 +31,9 @@ export default {
 #navbar-logo {
   height: 50px;
 }
+
+header {
+  margin-bottom: 2em
+}
 </style>
 
