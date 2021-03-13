@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * A specific execution (or run) of a test case.
  * An execution is correlated with a result obtained at a specific point in time.
  */
-@Document("test_case_executions")
+@Document("caseExecutions")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

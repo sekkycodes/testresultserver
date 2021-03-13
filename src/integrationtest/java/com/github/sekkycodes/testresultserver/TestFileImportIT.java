@@ -4,11 +4,13 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
+import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.services.FileImportService;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +44,14 @@ class TestFileImportIT extends IntegrationTestBase {
 
     // Then a new test suite execution is created
     assertThat(testSuiteExecutionRepository.count()).isEqualTo(1);
-    List<TestSuiteExecution> savedSuiteExecutions = testSuiteExecutionRepository
-        .findAllByIdName(SUITE_NAME);
-    assertThat(savedSuiteExecutions.isEmpty()).isFalse();
+    Optional<TestSuiteExecution> savedSuiteExecution = testSuiteExecutionRepository
+        // .findAllByEnvironment("dev");
+        .findById(new TimeNamePK(SUITE_NAME, 1615553404650L));
+    assertThat(savedSuiteExecution.isEmpty()).isFalse();
 
     // And test case executions are added for the suite
     List<TestCaseExecution> savedCaseExecutions = testCaseExecutionRepository
-        .findAllBySuiteNameAndIdTime(SUITE_NAME, savedSuiteExecutions.get(0).getId().getTime());
+        .findAllBySuiteName(SUITE_NAME);
     assertThat(savedCaseExecutions.size()).isEqualTo(2);
   }
 }

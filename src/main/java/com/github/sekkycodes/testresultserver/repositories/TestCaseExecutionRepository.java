@@ -19,4 +19,6 @@ public interface TestCaseExecutionRepository extends
   List<TestCaseExecution> findAllByIdName(String name);
 
   List<TestCaseExecution> findAllBySuiteNameAndIdTime(String suiteName, long time);
+
+  List<TestCaseExecution> findAllBySuiteName(String suiteName);
 }

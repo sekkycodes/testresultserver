@@ -1,5 +1,7 @@
 package com.github.sekkycodes.testresultserver;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import com.github.sekkycodes.testresultserver.controllers.ReportingController;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
@@ -11,16 +13,17 @@ import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
 import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
 import com.github.sekkycodes.testresultserver.vo.reporting.ReportRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.google.common.truth.Truth.assertThat;
 
 class TestReportingIT extends IntegrationTestBase {
 
@@ -73,7 +76,7 @@ class TestReportingIT extends IntegrationTestBase {
       assertThat(unitEntry.get().getTestSuiteExecutionIds().size()).isEqualTo(2);
     }
 
-    private List<TestSuiteExecutionVO> setUpTestData() {
+    private void setUpTestData() {
       // note: the fixed clock in the FixtureHelper is set to 2020-01-29 (that's 'today')
       addTest("Unit", "local", "2020-01-29");
       addTest("Unit", "local", "2020-01-29");
@@ -93,18 +96,18 @@ class TestReportingIT extends IntegrationTestBase {
           .map(TestSuiteExecution::toValueObject).collect(Collectors.toList());
 
       assertThat(result.size()).isEqualTo(12);
-      return result;
     }
 
-    private TestSuiteExecutionVO addTest(String testType, String environment, String date) {
+    private void addTest(String testType, String environment, String date) {
       TestSuiteExecution testSuiteExecution = FixtureHelper.buildTestSuiteExecution();
       long dateAsMillis = DateFormatter.fromDate(date);
-      testSuiteExecution.setId(new TimeNamePK(UUID.randomUUID().toString(), dateAsMillis));
+      testSuiteExecution
+          .setId(new TimeNamePK(UUID.randomUUID().toString(), dateAsMillis));
       testSuiteExecution.setProject(DUMMY_PROJECT);
       testSuiteExecution.setTestType(testType);
       testSuiteExecution.setEnvironment(environment);
 
-      return testSuiteExecutionRepository.save(testSuiteExecution)
+      testSuiteExecutionRepository.save(testSuiteExecution)
           .toValueObject();
     }
   }

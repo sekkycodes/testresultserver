@@ -62,11 +62,13 @@ class ResultImportControllerTest extends TestBase {
 
     when(testSuiteExecutionRepository.save(any()))
         .thenReturn(
-            TestSuiteExecution.builder().id(new TimeNamePK("dummy suite", TIMESTAMP)).build());
+            TestSuiteExecution.builder()
+                .id(new TimeNamePK("dummy suite", TIMESTAMP)).build());
 
     when(testCaseExecutionRepository.save(any()))
         .thenReturn(
-            TestCaseExecution.builder().id(new TimeNamePK("dummy case", TIMESTAMP)).result(
+            TestCaseExecution.builder()
+                .id(new TimeNamePK("dummy case", TIMESTAMP)).result(
                 TestResult.PASSED).suiteName("dummy suite").build());
 
     JunitReader junitReader = new JunitReader();

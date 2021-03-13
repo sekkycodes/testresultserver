@@ -4,6 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.github.sekkycodes.testresultserver.IntegrationTestBase;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
+import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
 import java.util.List;
 import java.util.Optional;
@@ -33,8 +34,8 @@ class TestSuiteExecutionRepositoryIT extends IntegrationTestBase {
   @Test
   void storesNewTestSuite() {
     Optional<TestSuiteExecution> result = sut
-        .findByIdNameAndIdTime(storedExecution.getId().getName(), storedExecution.getId()
-            .getTime());
+        .findById(new TimeNamePK(storedExecution.getId().getName(), storedExecution.getId()
+            .getTime()));
 
     assertThat(result.isPresent()).isTrue();
     assertThat(result.get().getId().getName()).isEqualTo(storedExecution.getId().getName());

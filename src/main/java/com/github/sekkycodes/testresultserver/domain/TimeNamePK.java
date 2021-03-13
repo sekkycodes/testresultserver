@@ -26,4 +26,9 @@ public class TimeNamePK implements Serializable {
    * Unique point in time as epoch millis
    */
   private long time;
+
+  @Override
+  public String toString() {
+    return name + ";" + time;
+  }
 }
