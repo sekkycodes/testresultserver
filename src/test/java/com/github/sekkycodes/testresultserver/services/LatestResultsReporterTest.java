@@ -1,11 +1,11 @@
 package com.github.sekkycodes.testresultserver.services;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.github.sekkycodes.testresultserver.TestBase;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
+import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import java.util.Collection;
@@ -14,20 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 
 class LatestResultsReporterTest extends TestBase {
 
   private LatestResultsReporter sut;
 
   @Mock
-  MongoTemplate mongoTemplate;
-
-  @Mock
-  AggregationResults<TestSuiteExecution> aggregationResults;
+  TestSuiteExecutionRepository testSuiteExecutionRepository;
 
   private TestSuiteExecution dummyTestSuiteExecution;
 
@@ -35,15 +28,10 @@ class LatestResultsReporterTest extends TestBase {
   void beforeEach() {
     dummyTestSuiteExecution = FixtureHelper.buildTestSuiteExecution();
 
-    when(aggregationResults.getMappedResults())
-        .thenReturn(Collections.singletonList(FixtureHelper.buildTestSuiteExecution()));
+    when(testSuiteExecutionRepository.findAll())
+        .thenReturn(Collections.singletonList(dummyTestSuiteExecution));
 
-    when(mongoTemplate.aggregate(
-        Mockito.<TypedAggregation<TestSuiteExecution>>any(),
-        eq(TestSuiteExecution.class)))
-        .thenReturn(aggregationResults);
-
-    sut = new LatestResultsReporter(mongoTemplate);
+    sut = new LatestResultsReporter(testSuiteExecutionRepository);
   }
 
   @Nested

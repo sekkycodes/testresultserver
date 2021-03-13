@@ -216,13 +216,15 @@ class AggregatedResultReporterTest extends TestBase {
       // arrange
       TestSuiteExecution tooOldTestSuite = createDummyTest("Unit");
       // set suite execution back 6 days
-      tooOldTestSuite.setId(new TimeNamePK(UUID.randomUUID().toString(),
-          FixtureHelper.FIXED_CLOCK.instant().minus(6, ChronoUnit.DAYS).toEpochMilli()));
+      long sixDaysBack = FixtureHelper.FIXED_CLOCK.instant().minus(6, ChronoUnit.DAYS)
+          .toEpochMilli();
+      tooOldTestSuite.setId(new TimeNamePK(UUID.randomUUID().toString(), sixDaysBack));
 
       TestSuiteExecution newTestSuite = createDummyTest("Unit");
       // set suite execution back 4 days
-      newTestSuite.setId(new TimeNamePK(UUID.randomUUID().toString(),
-          FixtureHelper.FIXED_CLOCK.instant().minus(4, ChronoUnit.DAYS).toEpochMilli()));
+      long fourDaysBack = FixtureHelper.FIXED_CLOCK.instant().minus(4, ChronoUnit.DAYS)
+          .toEpochMilli();
+      newTestSuite.setId(new TimeNamePK(UUID.randomUUID().toString(), fourDaysBack));
 
       List<TestSuiteExecution> suiteExecutions = new ArrayList<>();
       suiteExecutions.add(tooOldTestSuite);
@@ -266,9 +268,9 @@ class AggregatedResultReporterTest extends TestBase {
 
   private TestSuiteExecution createDummyTest(String testType) {
     TestSuiteExecution testSuiteExecution = FixtureHelper.buildTestSuiteExecution();
+    long time = testSuiteExecution.getDuration() + addedTestSuites.getAndIncrement();
     testSuiteExecution.setId(
-        new TimeNamePK("someSuite",
-            testSuiteExecution.getDuration() + addedTestSuites.getAndIncrement()));
+        new TimeNamePK("someSuite", time));
     testSuiteExecution.setProject(DUMMY_PROJECT);
     testSuiteExecution.setTestType(testType);
 

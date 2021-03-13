@@ -1,7 +1,6 @@
 package com.github.sekkycodes.testresultserver.controllers;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
 import com.github.sekkycodes.testresultserver.TestBase;
@@ -17,10 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -31,27 +26,17 @@ public class ReportingControllerTest extends TestBase {
   @Mock
   TestSuiteExecutionRepository testSuiteExecutionRepository;
 
-  @Mock
-  MongoTemplate mongoTemplate;
-
-  @Mock
-  AggregationResults<TestSuiteExecution> aggregationResults;
-
   private TestSuiteExecution dummyTestSuiteExecution;
 
   @BeforeEach
   void beforeEach() {
     dummyTestSuiteExecution = FixtureHelper.buildTestSuiteExecution();
 
-    when(aggregationResults.getMappedResults())
+    when(testSuiteExecutionRepository.findAll())
         .thenReturn(Collections.singletonList(dummyTestSuiteExecution));
 
-    when(mongoTemplate.aggregate(
-        Mockito.<TypedAggregation<TestSuiteExecution>>any(),
-        eq(TestSuiteExecution.class)))
-        .thenReturn(aggregationResults);
-
-    LatestResultsReporter latestResultsReporter = new LatestResultsReporter(mongoTemplate);
+    LatestResultsReporter latestResultsReporter = new LatestResultsReporter(
+        testSuiteExecutionRepository);
 
     AggregatedResultsReporter aggregatedResultsReporter = new AggregatedResultsReporter(
         testSuiteExecutionRepository, FixtureHelper.FIXED_CLOCK);
