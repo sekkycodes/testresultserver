@@ -7,7 +7,30 @@ A simple Java server to store and analyse test results.
 
 # Usage
 
-To see the API documentation open /swagger-ui.html on your running instance.
+## Obtain Docker Image
+
+From dockerhub:
+
+    docker pull sekkydocks/testresultserver
+
+Or you can build it yourself by following the instructions below.
+
+## Compose Docker Container
+
+The TestResultServer needs a MongoDB running as the database. For production use the application
+expects another docker image with the name trs_mongo.
+
+The simplest way to set it up correctly is to run the docker-compose file using
+
+    docker compose up
+
+## Use the app
+
+By default, the server is running on port 8081.
+
+To access the frontend open http://localhost:8081/index.html.
+
+To see the API documentation open http://localhost:8081/swagger-ui.html.
 
 # Development
 
@@ -15,6 +38,8 @@ To see the API documentation open /swagger-ui.html on your running instance.
 
 ### Prerequisites
 
+* [Docker](https://www.docker.com/)
+* [Docker-Compose](https://docs.docker.com/compose/)
 * [IntelliJ IDEA](https://www.jetbrains.com/de-de/idea/), [Eclipse](https://www.eclipse.org/ide/) or
   another Java-able IDE
 * JDK11
@@ -36,7 +61,7 @@ Import the intellij-java-google-style.xml when coding with IntelliJ IDEA.
 To run tests:
 
     mvn test
-	
+
 This will also create a Jacoco test coverage report under target/site.
 
 ### Docker
@@ -48,7 +73,7 @@ Create docker image:
     cd target/dependency; jar -xf ../*.jar
     cd ../..
     docker build -t testresultserver .
-	
+
 To run only the testresultserver in a docker container:
 
 	docker run -p 8081:8081 testresultserver
