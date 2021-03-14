@@ -41,7 +41,7 @@ This will also create a Jacoco test coverage report under target/site.
 
 ### Docker
 
-Create backend docker image:
+Create docker image:
 
     mvn clean install -P prod -DskipTests
     mkdir -p target/dependency
@@ -49,10 +49,10 @@ Create backend docker image:
     cd ../..
     docker build -t testresultserver .
 	
-To run only the backend in a docker container:
+To run only the testresultserver in a docker container:
 
 	docker run -p 8081:8081 testresultserver
 
-Compose docker container (rebuilds images):
+Compose docker container (rebuilds images, includes mongoDB):
 
     docker-compose up --build
