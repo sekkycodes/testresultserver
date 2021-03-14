@@ -41,7 +41,9 @@ To run unit and integration tests:
 
 Run docker container:
 
-    mvn install
-    mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+    mvn clean install -P prod -DskipTests
+    mkdir -p target/dependency
+    cd target/dependency; jar -xf ../*.jar
+    cd ../..
     docker build -t testresultserver .
-    docker run -p 8080:8080 testresultserver
+    docker run -p 8081:8081 testresultserver
