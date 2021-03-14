@@ -1,6 +1,6 @@
 <template>
   <div id="latest-result-pie-chart">
-    <apexchart type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
+    <apexchart id="typeApexChart" ref="typeApexChart" type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
   </div>
 </template>
 
@@ -9,31 +9,46 @@ import VueApexCharts from "vue-apexcharts";
 import axios from "axios";
 
 export default {
-  name: "LatestResultsPieChart",
+  name: "TestTypePieChart",
   components: {
     apexchart: VueApexCharts,
   },
   mounted: function() {
     axios.get("http://localhost:8081/api/reporting/latest-suites")
         .then(response => {
-          this.series = [0, 0, 0, 0]
+
+          this.series = []
+          this.chartOptions.labels = ['unit']
+
+          let testTypeMap = new Map();
+
           response.data.forEach(d => {
-            this.series[0] += d.testCasesPassed;
-            this.series[1] += d.testCasesSkipped;
-            this.series[2] += d.testCasesFailed;
-            this.series[3] += d.testCasesWithError;
+            let tcs = d.testCasesTotal;
+            if(testTypeMap.has(d.testType)) {
+              tcs += testTypeMap.get(d.testType);
+            }
+            testTypeMap.set(d.testType, tcs);
           })
+
+          this.series = Array.from(testTypeMap.values());
+          this.chartOptions.labels = Array.from(testTypeMap.keys());
+
+          this.$refs.typeApexChart.refresh();
+          this.$refs.typeApexChart.updateSeries(this.series);
         })
+  },
+  methods: {
+
   },
   data: function() {
     return {
-      series: [0, 0, 0, 0],
+      series: [0],
       chartOptions: {
         chart: {
           width: 380,
           type: 'pie',
         },
-        labels: ['Passed', 'Skipped', 'Failed', 'Error'],
+        labels: [''],
         responsive: [{
           breakpoint: 480,
           options: {
