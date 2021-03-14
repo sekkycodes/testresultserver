@@ -1,6 +1,6 @@
 <template>
   <div id="latest-result-pie-chart">
-    <apexchart id="typeApexChart" ref="typeApexChart" type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
+    <apexchart id="test-type-chart" ref="typeApexChart" type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
   </div>
 </template>
 
@@ -18,7 +18,7 @@ export default {
         .then(response => {
 
           this.series = []
-          this.chartOptions.labels = ['unit']
+          this.chartOptions.labels = []
 
           let testTypeMap = new Map();
 

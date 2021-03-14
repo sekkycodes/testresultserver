@@ -18,8 +18,8 @@ export default {
         .then(response => {
           this.series = [0, 0, 0, 0]
           response.data.forEach(d => {
-            this.series[0] += d.testCasesPassed;
-            this.series[1] += d.testCasesSkipped;
+            this.series[0] += d.testCasesSkipped;
+            this.series[1] += d.testCasesPassed;
             this.series[2] += d.testCasesFailed;
             this.series[3] += d.testCasesWithError;
           })
@@ -33,7 +33,7 @@ export default {
           width: 380,
           type: 'pie',
         },
-        labels: ['Passed', 'Skipped', 'Failed', 'Error'],
+        labels: ['Skipped', 'Passed', 'Failed', 'Error'],
         responsive: [{
           breakpoint: 480,
           options: {
