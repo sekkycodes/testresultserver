@@ -1,0 +1,21 @@
+version: "3"
+services:
+
+  backend:
+    build:
+      context: ./
+    ports:
+      - "8081:8081"
+    container_name: backend
+    links:
+      - trs_mongo
+    depends_on:
+      - trs_mongo
+
+  trs_mongo:
+    image: 'mongo'
+    volumes:
+      - ./mongo-volume:/data/db
+    ports:
+      - '27017-27019:27017-27019'
+    container_name: trs_mongo

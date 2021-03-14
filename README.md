@@ -31,19 +31,28 @@ Import the intellij-java-google-style.xml when coding with IntelliJ IDEA.
 
 ## Build and Run
 
-To run unit tests:
+### Tests
+
+To run tests:
 
     mvn test
+	
+This will also create a Jacoco test coverage report under target/site.
 
-To run unit and integration tests:
+### Docker
 
-    mvn verify
-
-Run docker container:
+Create backend docker image:
 
     mvn clean install -P prod -DskipTests
     mkdir -p target/dependency
     cd target/dependency; jar -xf ../*.jar
     cd ../..
     docker build -t testresultserver .
-    docker run -p 8081:8081 testresultserver
+	
+To run only the backend in a docker container:
+
+	docker run -p 8081:8081 testresultserver
+
+Compose docker container (rebuilds images):
+
+    docker-compose up --build
