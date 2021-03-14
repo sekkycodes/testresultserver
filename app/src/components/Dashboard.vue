@@ -5,7 +5,7 @@
         <LatestResultPieChart />
       </div>
       <div class="col-md-6">
-        TBD: add another chart
+        <TestTypePieChart />
       </div>
     </div>
   </div>
@@ -13,10 +13,12 @@
 
 <script>
 import LatestResultPieChart from "@/components/LatestResultPieChart";
+import TestTypePieChart from "@/components/TestTypePieChart";
 
 export default {
   components: {
-    LatestResultPieChart
+    LatestResultPieChart,
+    TestTypePieChart
   }
 }
 
