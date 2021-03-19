@@ -1,19 +1,30 @@
 <template>
   <div>
     <h2> {{ headline }} </h2>
-    <apexchart id="trend-chart" ref="trendChart" type="bar" height="350" :options="trendChartOptions"
-               :series="trendChartSeries"></apexchart>
+    <div class="row">
+      <div class="col-md-12">
+      <apexchart id="trend-chart" ref="trendChart" type="bar" height="350" :options="trendChartOptions"
+                 :series="trendChartSeries"></apexchart>
+      </div>
+    </div>
+    <div class="row" v-if="selection.date && selection.result">
+      <div class="col-md-12">
+        <TrendDetailsTable :date="selection.date" :result="selection.result"/>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import VueApexCharts from "vue-apexcharts";
 import * as moment from "moment";
+import TrendDetailsTable from "@/components/TrendDetailsTable";
 
 export default {
   name: "TrendChart",
   components: {
     apexchart: VueApexCharts,
+    TrendDetailsTable
   },
   methods: {
     buildLast14DaysArray: function () {
@@ -25,11 +36,13 @@ export default {
                   .format("YYYY-MM-DD"));
     },
     updateDetailList: function (sourceChart, selectedDataPointIndex, seriesIndex) {
-      console.log("selected test result type: " + this.trendSeries[seriesIndex].name);
-      const label = sourceChart.axes.w.config.xaxis.categories[selectedDataPointIndex];
-      console.log("selected date: " + label)
+      this.selection.result = this.trendSeries[seriesIndex].name;
+      this.selection.date = sourceChart.axes.w.config.xaxis.categories[selectedDataPointIndex];
     },
-    clearDetailList: function() {
+    clearDetailList: function () {
+      this.selection.result = null;
+      this.selection.date = null;
+
       console.log("clear");
     }
   },
@@ -71,7 +84,7 @@ export default {
 
               // opts is an array of arrays, where only the last element is set (for single item selection)
               // if the last item of the array has a value, then that value was selected in the chart
-              const selectedDataPointIndex = opts.selectedDataPoints[opts.selectedDataPoints.length-1];
+              const selectedDataPointIndex = opts.selectedDataPoints[opts.selectedDataPoints.length - 1];
               if (selectedDataPointIndex.length === 1) {
                 this.updateDetailList(chart, selectedDataPointIndex[0], opts.seriesIndex);
               } else {
@@ -121,8 +134,11 @@ export default {
       }, {
         name: "Error",
         data: []
+      }],
+      selection: {
+        date: null,
+        result: null
       }
-      ]
     }
   },
   props: {
