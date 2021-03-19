@@ -3,6 +3,7 @@ package com.github.sekkycodes.testresultserver.repositories;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.github.sekkycodes.testresultserver.IntegrationTestBase;
+import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
@@ -33,6 +34,18 @@ class TestSuiteExecutionRepositoryIT extends IntegrationTestBase {
     storedExecution = FixtureHelper.buildTestSuiteExecution();
     storedExecution.getTestCaseExecutionList().forEach(tc -> testCaseExecutionRepository.save(tc));
     sut.save(storedExecution);
+
+    TestSuiteExecution differentProject = FixtureHelper.buildTestSuiteExecution();
+    differentProject.setProject("different project");
+    differentProject
+        .setId(new TimeNamePK("some other ID", FixtureHelper.FIXED_TIMESTAMP.toEpochMilli()));
+    sut.save(differentProject);
+
+    TestSuiteExecution differentTestType = FixtureHelper.buildTestSuiteExecution();
+    differentTestType.setTestType("different testType");
+    differentTestType
+        .setId(new TimeNamePK("yet another ID", FixtureHelper.FIXED_TIMESTAMP.toEpochMilli()));
+    sut.save(differentTestType);
   }
 
   @AfterEach
@@ -62,9 +75,13 @@ class TestSuiteExecutionRepositoryIT extends IntegrationTestBase {
 
   @Test
   void findsTestSuitesByExecutionDate() {
-    List<TestSuiteExecution> result = sut.findByExecutionDate(LocalDate.parse("2020-01-29"));
+    List<TestSuiteExecution> result = sut.findByExecutionDateAndProjectAndTestType(
+        LocalDate.parse("2020-01-29"), storedExecution.getTestType(), storedExecution.getProject());
 
     assertThat(result.isEmpty()).isFalse();
-    assertThat(result.get(0).getId().getName()).isEqualTo(storedExecution.getId().getName());
+    TestSuiteExecution resultSuite = result.get(0);
+    assertThat(resultSuite.getId().getName()).isEqualTo(storedExecution.getId().getName());
+    assertThat(resultSuite.getProject()).isEqualTo(storedExecution.getProject());
+    assertThat(resultSuite.getTestType()).isEqualTo(storedExecution.getTestType());
   }
 }

@@ -2,6 +2,7 @@ package com.github.sekkycodes.testresultserver.controllers;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.github.sekkycodes.testresultserver.domain.TestResult;
@@ -42,18 +43,18 @@ class TestCaseControllerTest {
     @Test
     void returnsBadRequestIfResultCannotBeMapped() {
       ResponseEntity<Set<TestCaseExecutionVO>> response = sut
-          .getByDateAndResult("2020-01-01", "invalid string");
+          .getByDateAndResult("2020-01-01", "invalid string", "unit", "project01");
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
     void returnsSetOfTestCaseExecutions() {
-      when(testCaseRetriever.retrieveByResultAndDate(any(), any()))
+      when(testCaseRetriever.retrieveByResultAndDate(any(), any(), anyString(), anyString()))
           .thenReturn(Collections.singleton(dummyTestCaseExecution));
 
       ResponseEntity<Set<TestCaseExecutionVO>> response = sut.getByDateAndResult("2020-01-01",
-          TestResult.PASSED.name());
+          TestResult.PASSED.name(), "unit", "project01");
 
       assertThat(response.getBody()).isNotNull();
       assertThat(response.getBody().size()).isEqualTo(1);

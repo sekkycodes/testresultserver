@@ -35,9 +35,9 @@ public class TestCaseRetriever {
   // the implementation for this method is far from ideal - it loads all suites for a date before
   // filtering for test case results. better would be to filter out the test cases on DB side.
   public Set<TestCaseExecutionVO> retrieveByResultAndDate(LocalDate executionDate,
-      TestResult result) {
+      TestResult result, String testType, String project) {
     List<TestSuiteExecution> testSuiteExecutionList = testSuiteExecutionRepository
-        .findByExecutionDate(executionDate);
+        .findByExecutionDateAndProjectAndTestType(executionDate, project, testType);
 
     return testSuiteExecutionList.stream()
         .map(TestSuiteExecution::getTestCaseExecutionList)

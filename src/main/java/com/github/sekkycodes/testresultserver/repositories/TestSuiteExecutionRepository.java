@@ -20,5 +20,6 @@ public interface TestSuiteExecutionRepository extends
   List<TestSuiteExecution> findAllByIdName(String name);
 
   @Query(" { 'executionDate': ?0 } ")
-  List<TestSuiteExecution> findByExecutionDate(LocalDate executionDate);
+  List<TestSuiteExecution> findByExecutionDateAndProjectAndTestType(LocalDate executionDate,
+      String project, String testType);
 }

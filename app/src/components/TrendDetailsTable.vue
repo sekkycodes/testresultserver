@@ -16,7 +16,8 @@
         :title="modalTitle"
         size="lg"
     >
-      {{ this.selectedItem }}
+      <div>{{ this.message }}</div>
+      <div style="overflow-x:scroll" v-html="this.details">{{ this.details }}</div>
     </b-modal>
   </div>
 </template>
@@ -50,6 +51,12 @@ export default {
             console.dir(this.testCases);
           });
     },
+    removeLineBreaks: function(str) {
+      if(!str){
+        return "";
+      }
+      return str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    },
     onRowSelected: function (item) {
       this.selectedItem = item[0];
       this.showModal = this.selectedItem && true;
@@ -59,6 +66,18 @@ export default {
     this.loadData();
   },
   computed: {
+    message: function() {
+      if(!this.selectedItem) {
+        return "";
+      }
+      return this.selectedItem.message ?? ""
+    },
+    details: function() {
+      if(!this.selectedItem) {
+        return "";
+      }
+      return this.removeLineBreaks(this.selectedItem.details ?? "");
+    },
     modalTitle: function() {
       return this.selectedItem ? "Details for Test Case " + this.selectedItem.idName : "";
     }

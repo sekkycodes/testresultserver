@@ -38,7 +38,9 @@ public class TestCaseController {
   @GetMapping("/by-date-and-result")
   public ResponseEntity<Set<TestCaseExecutionVO>> getByDateAndResult(
       @RequestParam String date,
-      @RequestParam String result
+      @RequestParam String result,
+      @RequestParam String testType,
+      @RequestParam String project
   ) {
     TestResult filterForResult;
     try {
@@ -50,7 +52,7 @@ public class TestCaseController {
     LocalDate filterForDate = LocalDate.parse(date);
 
     Set<TestCaseExecutionVO> testCaseExecutionVOs = testCaseRetriever
-        .retrieveByResultAndDate(filterForDate, filterForResult);
+        .retrieveByResultAndDate(filterForDate, filterForResult, testType, project);
 
     return ResponseEntity.ok(testCaseExecutionVOs);
   }
