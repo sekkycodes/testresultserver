@@ -14,5 +14,8 @@ public class TestCaseExecutionVO {
   long idTime;
   String testResult;
   long duration;
+  String message;
+  String details;
+  String failureType;
 
 }

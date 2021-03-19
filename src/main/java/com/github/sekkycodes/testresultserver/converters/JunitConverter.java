@@ -5,6 +5,8 @@ import com.github.sekkycodes.testresultserver.domain.TestResult;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.junit.Testsuite;
+import com.github.sekkycodes.testresultserver.junit.Testsuite.Testcase.Error;
+import com.github.sekkycodes.testresultserver.junit.Testsuite.Testcase.Failure;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
@@ -12,6 +14,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,11 +75,34 @@ public class JunitConverter {
   public TestCaseExecution toTestCaseExecution(Testsuite.Testcase testCase, String suiteName,
       long executionTime) {
 
+    TestResult result = toTestResult(testCase);
+    String message = Strings.EMPTY;
+    String details = Strings.EMPTY;
+    String failureType = Strings.EMPTY;
+
+    switch (result) {
+      case FAILED:
+        Failure failure = testCase.getFailure();
+        message = failure.getMessage();
+        details = failure.getValue();
+        failureType = failure.getType();
+        break;
+      case ERROR:
+        Error error = testCase.getError();
+        message = error.getMessage();
+        details = error.getValue();
+        failureType = error.getType();
+        break;
+    }
+
     return TestCaseExecution.builder()
         .id(new TimeNamePK(testCase.getName(), executionTime))
         .suiteName(suiteName)
         .duration(toMillis(testCase.getTime()))
         .result(toTestResult(testCase))
+        .failureType(failureType)
+        .message(message)
+        .details(details)
         .build();
   }
 

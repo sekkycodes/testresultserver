@@ -45,6 +45,9 @@ public class FixtureHelper {
         .suiteName("dummy test suite")
         .result(TestResult.PASSED)
         .duration(200L)
+        .message("dummy message")
+        .details("dummy details")
+        .failureType("dummy failure type")
         .build();
   }
 

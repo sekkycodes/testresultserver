@@ -28,6 +28,9 @@ public class TestCaseExecutionTest {
       assertThat(vo.getIdTime()).isEqualTo(sut.getId().getTime());
       assertThat(vo.getTestResult()).isEqualTo(sut.getResult().name());
       assertThat(vo.getDuration()).isEqualTo(sut.getDuration());
+      assertThat(vo.getMessage()).isEqualTo(sut.getMessage());
+      assertThat(vo.getDetails()).isEqualTo(sut.getDetails());
+      assertThat(vo.getFailureType()).isEqualTo(sut.getFailureType());
     }
   }
 }

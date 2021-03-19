@@ -17,6 +17,7 @@ import java.time.ZoneId;
 import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -109,6 +110,9 @@ class JunitConverterTest {
 
     @Test
     void convertsJunitTestcaseToCanonicalEntity() {
+      dummyCase.setError(null);
+      dummyCase.setFailure(null);
+
       TestCaseExecution result = invokeSut();
 
       assertThat(result.getId().getName()).isEqualTo(dummyCase.getName());
@@ -116,6 +120,10 @@ class JunitConverterTest {
       assertThat(result.getSuiteName()).isEqualTo(SUITE_NAME);
       assertThat(result.getDuration()).isEqualTo(1000L);
       assertThat(result.getResult()).isEqualTo(TestResult.PASSED);
+
+      assertThat(result.getMessage()).isEqualTo(Strings.EMPTY);
+      assertThat(result.getDetails()).isEqualTo(Strings.EMPTY);
+      assertThat(result.getFailureType()).isEqualTo(Strings.EMPTY);
     }
 
     @Test
@@ -134,15 +142,22 @@ class JunitConverterTest {
       TestCaseExecution result = invokeSut();
 
       assertThat(result.getResult()).isEqualTo(TestResult.ERROR);
+      assertThat(result.getMessage()).isEqualTo(dummyCase.getError().getMessage());
+      assertThat(result.getDetails()).isEqualTo(dummyCase.getError().getValue());
+      assertThat(result.getFailureType()).isEqualTo(dummyCase.getError().getType());
     }
 
     @Test
     void setsFailedTestResult() {
       dummyCase.setFailure(new Failure());
+      dummyCase.setError(null);
 
       TestCaseExecution result = invokeSut();
 
       assertThat(result.getResult()).isEqualTo(TestResult.FAILED);
+      assertThat(result.getMessage()).isEqualTo(dummyCase.getFailure().getMessage());
+      assertThat(result.getDetails()).isEqualTo(dummyCase.getFailure().getValue());
+      assertThat(result.getFailureType()).isEqualTo(dummyCase.getFailure().getType());
     }
 
     private TestCaseExecution invokeSut() {
@@ -154,6 +169,19 @@ class JunitConverterTest {
     Testcase testCase = new Testcase();
     testCase.setName("dummyTestCase");
     testCase.setTime(BigDecimal.ONE);
+
+    Error error = new Error();
+    error.setMessage("dummy error message");
+    error.setType("dummy error type");
+    error.setValue("dummy error details");
+    testCase.setError(error);
+
+    Failure failure = new Failure();
+    failure.setMessage("dummy failure message");
+    failure.setType("dummy failure type");
+    failure.setValue("dummy failure details");
+    testCase.setFailure(failure);
+
     return testCase;
   }
 }

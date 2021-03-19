@@ -39,12 +39,28 @@ public class TestCaseExecution {
   TestResult result;
 
   /**
+   * An error or failure message
+   */
+  String message;
+
+  /**
+   * Error details, like complete stacktrace in case one occurred during test execution
+   */
+  String details;
+
+  /**
+   * Type of failure (or error) that occurred during test execution
+   */
+  String failureType;
+
+  /**
    * How long the test case was running (in milliseconds)
    */
   long duration;
 
   /**
    * Converts the domain object into an immutable value object
+   *
    * @return mapped value object
    */
   public TestCaseExecutionVO toValueObject() {
@@ -53,6 +69,9 @@ public class TestCaseExecution {
         .idTime(id.getTime())
         .testResult(result.name())
         .duration(duration)
+        .message(message)
+        .failureType(failureType)
+        .details(details)
         .build();
   }
 }
