@@ -12,6 +12,7 @@ import com.github.sekkycodes.testresultserver.junit.Testsuite.Testcase.Failure;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -49,12 +50,14 @@ class JunitConverterTest {
 
       assertThat(result.getId().getName()).isEqualTo("dummyTestSuite");
       assertThat(result.getId().getTime()).isEqualTo(TIME_MILLIS);
+      assertThat(result.getExecutionDate()).isEqualTo(LocalDate.parse("2021-02-13"));
       assertThat(result.getDuration()).isEqualTo(10_000L);
       assertThat(result.getTestCasesTotal()).isEqualTo(1);
       assertThat(result.getTestCasesPassed()).isEqualTo(1);
       assertThat(result.getTestCasesFailed()).isEqualTo(0);
       assertThat(result.getTestCasesSkipped()).isEqualTo(0);
       assertThat(result.getTestCasesWithError()).isEqualTo(0);
+      assertThat(result.getTestCaseExecutionList().size()).isEqualTo(1);
     }
 
     @Test

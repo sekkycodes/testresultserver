@@ -7,6 +7,10 @@ import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.junit.Testsuite;
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,14 +45,21 @@ public class JunitConverter {
         junitSuite.getTests() - junitSuite.getErrors()
             - junitSuite.getSkipped() - junitSuite.getFailures();
 
+    List<TestCaseExecution> testCases = junitSuite.getTestcase().stream()
+        .map(tc -> toTestCaseExecution(tc, junitSuite.getName(), executionTimestamp))
+        .collect(Collectors.toList());
+
     return TestSuiteExecution.builder()
         .id(new TimeNamePK(junitSuite.getName(), executionTimestamp))
+        .executionDate(
+            Instant.ofEpochMilli(executionTimestamp).atZone(ZoneId.of("UTC")).toLocalDate())
         .duration(toMillis(junitSuite.getTime()))
         .testCasesTotal(junitSuite.getTests())
         .testCasesPassed(passed)
         .testCasesFailed(junitSuite.getFailures())
         .testCasesSkipped(junitSuite.getSkipped())
         .testCasesWithError(junitSuite.getErrors())
+        .testCaseExecutionList(testCases)
         .build();
   }
 

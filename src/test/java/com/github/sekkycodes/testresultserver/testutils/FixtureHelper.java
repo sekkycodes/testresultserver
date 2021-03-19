@@ -8,6 +8,7 @@ import com.github.sekkycodes.testresultserver.utils.DateFormatter;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Collections;
 
@@ -24,6 +25,7 @@ public class FixtureHelper {
   public static TestSuiteExecution buildTestSuiteExecution() {
     return TestSuiteExecution.builder()
         .id(new TimeNamePK("dummy test suite", FIXED_TIMESTAMP.toEpochMilli()))
+        .executionDate(LocalDate.parse("2020-01-29"))
         .duration(1000L)
         .project("myDummyProject")
         .testType("Unit")
@@ -33,6 +35,7 @@ public class FixtureHelper {
         .testCasesFailed(2)
         .testCasesSkipped(3)
         .testCasesWithError(4)
+        .testCaseExecutionList(Collections.singletonList(buildTestCaseExecution()))
         .build();
   }
 

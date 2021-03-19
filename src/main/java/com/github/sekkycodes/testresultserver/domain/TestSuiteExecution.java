@@ -2,13 +2,18 @@ package com.github.sekkycodes.testresultserver.domain;
 
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import com.querydsl.core.annotations.QueryEntity;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * A specific execution (or run) of a testsuite and all tests therein. An execution is correlated
@@ -28,6 +33,11 @@ public class TestSuiteExecution {
    */
   @Id
   TimeNamePK id;
+
+  /**
+   * Date of execution
+   */
+  LocalDate executionDate;
 
   /**
    * A project identifier which the test suite was executed for
@@ -74,6 +84,13 @@ public class TestSuiteExecution {
    * Number of test cases that had an error occurring during execution
    */
   int testCasesWithError;
+
+  /**
+   * The test cases that were executed within this suite
+   */
+  @DBRef(lazy = true)
+  @Field("testCases")
+  List<TestCaseExecution> testCaseExecutionList = new ArrayList<>();
 
   /**
    * Converts the domain object into an immutable value object
