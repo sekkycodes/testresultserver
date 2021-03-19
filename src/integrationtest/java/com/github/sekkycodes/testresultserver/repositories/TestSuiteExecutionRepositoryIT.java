@@ -3,7 +3,6 @@ package com.github.sekkycodes.testresultserver.repositories;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.github.sekkycodes.testresultserver.IntegrationTestBase;
-import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
@@ -76,9 +75,9 @@ class TestSuiteExecutionRepositoryIT extends IntegrationTestBase {
   @Test
   void findsTestSuitesByExecutionDate() {
     List<TestSuiteExecution> result = sut.findByExecutionDateAndProjectAndTestType(
-        LocalDate.parse("2020-01-29"), storedExecution.getTestType(), storedExecution.getProject());
+        LocalDate.parse("2020-01-29"), storedExecution.getProject(), storedExecution.getTestType());
 
-    assertThat(result.isEmpty()).isFalse();
+    assertThat(result.size()).isEqualTo(1);
     TestSuiteExecution resultSuite = result.get(0);
     assertThat(resultSuite.getId().getName()).isEqualTo(storedExecution.getId().getName());
     assertThat(resultSuite.getProject()).isEqualTo(storedExecution.getProject());

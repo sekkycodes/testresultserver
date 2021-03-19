@@ -2,7 +2,7 @@
   <div id="trend-charts-container">
     <div class="row" v-for="typeEntries in Array.from(testTypeMap.entries())" :key="typeEntries.key">
       <div class="col-md-12">
-        <TrendChart :headline="typeEntries[0]" :entries="typeEntries[1]" />
+        <TrendChart :test-type="typeEntries[0]" :entries="typeEntries[1]" :project="projectName" />
       </div>
     </div>
   </div>
@@ -19,7 +19,8 @@ export default {
   },
   data: function() {
     return {
-      testTypeMap: new Map()
+      testTypeMap: new Map(),
+      projectName: 'project01'
     }
   },
   methods: {
@@ -31,7 +32,7 @@ export default {
         ],
         "filter": {
           "daysBack": 14,
-          "projectName": "project01"
+          "projectName": this.projectName
         }
       }).then(response => {
         this.fillCharts(response.data);

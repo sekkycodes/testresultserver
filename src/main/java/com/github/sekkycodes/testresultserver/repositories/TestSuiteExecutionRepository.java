@@ -19,7 +19,7 @@ public interface TestSuiteExecutionRepository extends
   @Query("{'_id': { $regex: '?0;.*' }}")
   List<TestSuiteExecution> findAllByIdName(String name);
 
-  @Query(" { 'executionDate': ?0 } ")
+  @Query(" { 'executionDate': ?0, 'project': ?1, 'testType': ?2 } ")
   List<TestSuiteExecution> findByExecutionDateAndProjectAndTestType(LocalDate executionDate,
       String project, String testType);
 }

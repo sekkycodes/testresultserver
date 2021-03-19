@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2> {{ headline }} </h2>
+    <h2> {{ testType }} </h2>
     <div class="row">
       <div class="col-md-12">
       <apexchart id="trend-chart" ref="trendChart" type="bar" height="350" :options="trendChartOptions"
@@ -9,7 +9,7 @@
     </div>
     <div class="row" v-if="selection.date && selection.result">
       <div class="col-md-12">
-        <TrendDetailsTable :date="selection.date" :result="selection.result"/>
+        <TrendDetailsTable :date="selection.date" :result="selection.result" :project="project" :test-type="testType"/>
       </div>
     </div>
   </div>
@@ -142,8 +142,9 @@ export default {
     }
   },
   props: {
-    headline: String,
-    entries: Array
+    testType: String,
+    entries: Array,
+    project: String
   }
 }
 </script>

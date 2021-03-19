@@ -29,7 +29,9 @@ import * as moment from "moment";
 export default {
   props: {
     date: String,
-    result: String
+    result: String,
+    project: String,
+    testType: String
   },
   watch: {
     date: function () {
@@ -41,7 +43,14 @@ export default {
   },
   methods: {
     loadData: function () {
-      axios.get("http://localhost:8081/api/testcase/by-date-and-result?date=" + this.date + "&result=" + this.result)
+      const params = {
+        date: this.date,
+        result: this.result,
+        project: this.project,
+        testType: this.testType
+      };
+
+      axios.get("http://localhost:8081/api/testcase/by-date-and-result", { params })
           .then(response => {
             this.testCases = response.data;
             this.testCases.forEach(tc => {
