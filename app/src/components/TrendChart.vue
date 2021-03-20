@@ -44,9 +44,9 @@ export default {
       this.selection.date = null;
 
       console.log("clear");
-    }
+    },
   },
-  mounted() {
+  created() {
     let last14daysArray = this.buildLast14DaysArray();
     let resultMap = new Map(last14daysArray.map(d => [d, {
       passed: 0,
@@ -79,6 +79,7 @@ export default {
           height: 350,
           stacked: true,
           stackType: '100%',
+          redrawOnParentResize: true,
           events: {
             dataPointSelection: (e, chart, opts) => {
 

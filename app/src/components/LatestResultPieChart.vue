@@ -1,6 +1,6 @@
 <template>
   <div id="latest-result-pie-chart">
-    <apexchart type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
+    <apexchart type="pie" width="380" :options="chartOptions" :series="series" :key="generateKey()"></apexchart>
   </div>
 </template>
 
@@ -13,7 +13,7 @@ export default {
   components: {
     apexchart: VueApexCharts,
   },
-  mounted: function() {
+  created: function() {
     axios.get("http://localhost:8081/api/reporting/latest-suites")
         .then(response => {
           this.series = [0, 0, 0, 0]
@@ -24,6 +24,13 @@ export default {
             this.series[3] += d.testCasesWithError;
           })
         })
+  },
+  methods: {
+    // this method is a trick to keep vue rendering the data in the chart correctly
+    // see https://michaelnthiessen.com/force-re-render/ and https://github.com/apexcharts/vue-apexcharts/issues/185
+    generateKey: function() {
+      return JSON.stringify(this.series ?? "");
+    }
   },
   data: function() {
     return {
