@@ -1,7 +1,7 @@
 <template>
   <div id="trend-charts-container">
     <div class="row" v-for="typeEntries in Array.from(testTypeMap.entries())" :key="typeEntries.key">
-      <div class="col-md-12">
+        <div class="col-md-12">
         <TrendChart :test-type="typeEntries[0]" :entries="typeEntries[1]" :project="projectName" />
       </div>
     </div>
@@ -17,14 +17,28 @@ export default {
   components: {
     TrendChart
   },
+  props: ['selection'],
   data: function() {
     return {
       testTypeMap: new Map(),
-      projectName: 'project01'
+      projectName: this.selection.project ? this.selection.project.name : null
+    }
+  },
+  watch: {
+    selection: {
+      immediate: true,
+      deep: true,
+      handler() {
+        this.loadAggregationData();
+      }
     }
   },
   methods: {
     loadAggregationData: function() {
+      if(!this.selection.project || !this.selection.project.name) {
+        return;
+      }
+
       axios.post("http://localhost:8081/api/reporting/aggregated", {
         "aggregations": [
           "TEST_TYPE",

@@ -83,4 +83,17 @@ class TestSuiteExecutionRepositoryIT extends IntegrationTestBase {
     assertThat(resultSuite.getProject()).isEqualTo(storedExecution.getProject());
     assertThat(resultSuite.getTestType()).isEqualTo(storedExecution.getTestType());
   }
+
+  @Test
+  void aggregatesAllProjects() {
+    List<TestSuiteExecution> suites = sut.findAllProjects();
+
+    assertThat(suites.size()).isEqualTo(3);
+    Optional<TestSuiteExecution> suite = suites.stream()
+        .filter(s -> storedExecution.getId().equals(s.getId())).findFirst();
+    assertThat(suite.isPresent()).isTrue();
+    assertThat(suite.get().getProject()).isEqualTo(storedExecution.getProject());
+    assertThat(suite.get().getEnvironment()).isEqualTo(storedExecution.getEnvironment());
+    assertThat(suite.get().getTestType()).isEqualTo(storedExecution.getTestType());
+  }
 }

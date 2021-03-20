@@ -5,6 +5,7 @@ import com.github.sekkycodes.testresultserver.domain.TestResult;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TimeNamePK;
 import com.github.sekkycodes.testresultserver.utils.DateFormatter;
+import com.github.sekkycodes.testresultserver.vo.ProjectVO;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
 import java.time.Clock;
 import java.time.Instant;
@@ -58,6 +59,14 @@ public class FixtureHelper {
         .testType("Unit")
         .environment("local")
         .labels(Collections.singletonList("label01"))
+        .build();
+  }
+
+  public static ProjectVO buildProject() {
+    return ProjectVO.builder()
+        .name("project01")
+        .environments(Collections.singleton("local"))
+        .testType(Collections.singleton("Unit"))
         .build();
   }
 }

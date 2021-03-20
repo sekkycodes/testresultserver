@@ -16,7 +16,7 @@
         <h1>Trends</h1>
       </div>
       <div class="col-md-12">
-        <TrendCharts />
+        <TrendCharts :selection="selection"/>
       </div>
     </div>
   </div>
@@ -32,6 +32,9 @@ export default {
     TrendCharts,
     LatestResultPieChart,
     TestTypePieChart
+  },
+  props: {
+    selection: Object
   }
 }
 

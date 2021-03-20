@@ -7,31 +7,33 @@
             <img id="navbar-logo" src="./assets/trs_logo.svg" alt="logo"/>
             <strong>Test Result Server</strong>
           </div>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item">
-                <JUnitXmlUpload />
-              </li>
-            </ul>
-          </div>
         </div>
       </div>
     </header>
     <main>
-      <Dashboard />
+      <OptionsBar :selection="selection" />
+      <Dashboard :selection="selection" />
     </main>
   </div>
 </template>
 
 <script>
 import Dashboard from './components/Dashboard.vue'
-import JUnitXmlUpload from "@/components/JUnitXmlUpload";
+import OptionsBar from './components/OptionsBar.vue'
 
 export default {
   name: 'App',
   components: {
-    Dashboard,
-    JUnitXmlUpload
+    OptionsBar,
+    Dashboard
+  },
+  data: function() {
+    return {
+      selection: {
+        project: null,
+        environment: null,
+      }
+    }
   }
 }
 </script>

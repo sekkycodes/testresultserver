@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ResultImportController {
 
   public static final String NO_FILE_ERROR_TEXT = "no file supplied for import";
-  public static final String NO_BODY_ERROR_TEXT = "no import request body";
 
   private final FileImportService fileImportService;
 
