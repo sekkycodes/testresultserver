@@ -1,23 +1,28 @@
 <template>
-  <div class="container" id="dashboard">
-    <div class="row">
-      <div class="col-md-12">
-        <h1>Latest Results</h1>
+  <div id="dashboard">
+    <div class="container" v-if="selection.project">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Latest Results</h1>
+        </div>
+        <div class="col-md-6">
+          <LatestResultPieChart :project-name="projectName" />
+        </div>
+        <div class="col-md-6">
+          <TestTypePieChart :project-name="projectName" />
+        </div>
       </div>
-      <div class="col-md-6">
-        <LatestResultPieChart />
-      </div>
-      <div class="col-md-6">
-        <TestTypePieChart />
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Trends</h1>
+        </div>
+        <div class="col-md-12">
+          <TrendCharts :selection="selection"/>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <h1>Trends</h1>
-      </div>
-      <div class="col-md-12">
-        <TrendCharts :selection="selection"/>
-      </div>
+    <div class="container" v-else>
+      <h4> Select Project to display results </h4>
     </div>
   </div>
 </template>
@@ -32,6 +37,13 @@ export default {
     TrendCharts,
     LatestResultPieChart,
     TestTypePieChart
+  },
+  computed: {
+    projectName: function() {
+      return this.selection.project
+          ? this.selection.project.name
+          : null;
+    }
   },
   props: {
     selection: Object

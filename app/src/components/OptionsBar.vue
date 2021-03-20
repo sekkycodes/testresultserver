@@ -13,7 +13,7 @@
       </div>
 
       <div class="col">
-        <JUnitXmlUpload/>
+        <JUnitXmlUpload class="float-right"/>
       </div>
     </div>
   </div>
