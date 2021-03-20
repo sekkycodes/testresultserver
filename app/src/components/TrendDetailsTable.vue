@@ -16,8 +16,14 @@
         :title="modalTitle"
         size="lg"
     >
-      <div>{{ this.message }}</div>
-      <div style="overflow-x:scroll" v-html="this.details">{{ this.details }}</div>
+      <div v-if="message">
+        <h5>Message</h5>
+        <p> {{ this.message }} </p>
+      </div>
+      <div class="stacktrace-container" v-if="details">
+        <h5>Error Details</h5>
+        <p class="text-monospace stacktrace" v-html="this.details">{{ this.details }}</p>
+      </div>
     </b-modal>
   </div>
 </template>
@@ -64,7 +70,7 @@ export default {
       if(!str){
         return "";
       }
-      return str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+      return str.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
     },
     onRowSelected: function (item) {
       this.selectedItem = item[0];
@@ -111,10 +117,10 @@ export default {
         },
         {
           key: 'duration',
+          label: "Duration (in sec)",
           sortable: true,
           formatter: (value) => {
-            const tempTime = moment.duration(value);
-            return tempTime.seconds() + " sec";
+            return moment.duration(value).asSeconds();
           }
         },
         {
@@ -127,3 +133,15 @@ export default {
   }
 }
 </script>
+
+<style>
+
+.stacktrace-container {
+  margin-top: 2.5em;
+}
+
+.stacktrace {
+  overflow-y: scroll;
+  white-space: nowrap;
+}
+</style>

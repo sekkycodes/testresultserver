@@ -74,12 +74,16 @@ export default {
   computed: {
     trendChartOptions: function () {
       return {
+        theme: {
+          mode: 'dark'
+        },
         chart: {
           type: 'bar',
           height: 350,
           stacked: true,
           stackType: '100%',
           redrawOnParentResize: true,
+          background: 'none',
           events: {
             dataPointSelection: (e, chart, opts) => {
 
@@ -101,7 +105,7 @@ export default {
               position: 'bottom',
               offsetX: -10,
               offsetY: 0
-            }
+            },
           }
         }],
         xaxis: {

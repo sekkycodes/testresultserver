@@ -53,6 +53,10 @@ export default {
         chart: {
           width: 380,
           type: 'pie',
+          background: 'none',
+        },
+        theme: {
+          mode: 'dark'
         },
         labels: ['Skipped', 'Passed', 'Failed', 'Error'],
         responsive: [{
