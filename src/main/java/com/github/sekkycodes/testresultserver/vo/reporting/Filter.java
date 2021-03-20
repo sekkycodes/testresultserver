@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Value;
 
@@ -28,9 +30,15 @@ public class Filter {
   String testType;
 
   /**
-   * Only consider suites having this label
+   * Only consider suites having all of these labels
    */
-  String label;
+  @Builder.Default
+  List<String> labels = new ArrayList<>();
+
+  /**
+   * Only consider suites matching this environment
+   */
+  String environment;
 
   /**
    * Take only the last x days of suite executions - if set to 0 all suites will be included in the

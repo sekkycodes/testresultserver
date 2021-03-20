@@ -37,6 +37,7 @@ public class FixtureHelper {
         .testCasesSkipped(3)
         .testCasesWithError(4)
         .testCaseExecutionList(Collections.singletonList(buildTestCaseExecution()))
+        .labels(Collections.singletonList("dummyLabel"))
         .build();
   }
 

@@ -1,6 +1,7 @@
 package com.github.sekkycodes.testresultserver.domain;
 
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
+import com.google.common.collect.ImmutableList;
 import com.querydsl.core.annotations.QueryEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -56,6 +57,14 @@ public class TestSuiteExecution {
   String environment;
 
   /**
+   * A test suite may be labelled with different strings chosen at the point of creation. Labels may
+   * describe the tests in the suite and/or add another metadata dimension by which to aggregate or
+   * filter.
+   */
+  @Builder.Default
+  List<String> labels = new ArrayList<>();
+
+  /**
    * How long the test suite was running until all test cases completed (in milliseconds)
    */
   long duration;
@@ -88,6 +97,7 @@ public class TestSuiteExecution {
   /**
    * The test cases that were executed within this suite
    */
+  @Builder.Default
   @DBRef(lazy = true)
   @Field("testCases")
   List<TestCaseExecution> testCaseExecutionList = new ArrayList<>();
@@ -104,6 +114,7 @@ public class TestSuiteExecution {
         .project(getProject())
         .testType(getTestType())
         .environment(getEnvironment())
+        .labels(ImmutableList.copyOf(labels))
         .duration(getDuration())
         .testCasesTotal(getTestCasesTotal())
         .testCasesPassed(getTestCasesPassed())

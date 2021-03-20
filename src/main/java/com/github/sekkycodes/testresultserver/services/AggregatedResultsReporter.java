@@ -95,6 +95,14 @@ public class AggregatedResultsReporter {
       booleanBuilder.and(qTestSuiteExecution.testType.eq(filter.getTestType()));
     }
 
+    if (!Strings.isNullOrEmpty(filter.getEnvironment())) {
+      booleanBuilder.and(qTestSuiteExecution.environment.eq(filter.getEnvironment()));
+    }
+
+    for (String label : filter.getLabels()) {
+      booleanBuilder.and(qTestSuiteExecution.labels.contains(label));
+    }
+
     Iterable<TestSuiteExecution> matched = testSuiteExecutionRepository
         .findAll(Objects.requireNonNull(booleanBuilder));
 

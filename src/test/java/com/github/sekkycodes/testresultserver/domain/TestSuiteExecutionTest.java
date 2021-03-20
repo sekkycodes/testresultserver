@@ -34,6 +34,7 @@ public class TestSuiteExecutionTest {
       assertThat(vo.getTestCasesSkipped()).isEqualTo(sut.getTestCasesSkipped());
       assertThat(vo.getTestCasesFailed()).isEqualTo(sut.getTestCasesFailed());
       assertThat(vo.getTestCasesWithError()).isEqualTo(sut.getTestCasesWithError());
+      assertThat(vo.getLabels()).isEqualTo(sut.getLabels());
     }
   }
 }

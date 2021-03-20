@@ -15,6 +15,7 @@ import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
 import com.github.sekkycodes.testresultserver.vo.reporting.ReportRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -76,6 +77,34 @@ class TestReportingIT extends IntegrationTestBase {
       assertThat(unitEntry.get().getTestSuiteExecutionIds().size()).isEqualTo(2);
     }
 
+    @Test
+    void createsReportFiltersOutUnwantedTestTypesAndEnvironments() {
+      // arrange
+      setUpTestData();
+      addTest("Unit", "local", "2020-01-29", Collections.singletonList("label12"));
+      addTest("Unit", "staging", "2020-01-29", Collections.singletonList("label11"));
+      addTest("Unit", "staging", "2020-01-29", Collections.singletonList("label12"));
+      ReportRequest request = ReportRequest.builder()
+          .filter(Filter.builder()
+              .testType("Unit")
+              .daysBack(14)
+              .labels(Collections.singletonList("label12"))
+              .environment("staging")
+              .build())
+          .aggregations(Collections.singletonList(AggregateBy.DATE))
+          .build();
+
+      // act
+      ResponseEntity<AggregatedReport> response = reportingController.aggregatedReport(request);
+
+      // assert
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      assertThat(response.getBody()).isNotNull();
+      AggregatedReport report = response.getBody();
+      assertThat(report.getEntries().size()).isEqualTo(1);
+      assertThat(report.getEntries().get(0).getTestSuiteExecutionIds().size()).isEqualTo(1);
+    }
+
     private void setUpTestData() {
       // note: the fixed clock in the FixtureHelper is set to 2020-01-29 (that's 'today')
       addTest("Unit", "local", "2020-01-29");
@@ -99,6 +128,10 @@ class TestReportingIT extends IntegrationTestBase {
     }
 
     private void addTest(String testType, String environment, String date) {
+      addTest(testType, environment, date, Collections.emptyList());
+    }
+
+    private void addTest(String testType, String environment, String date, List<String> labels) {
       TestSuiteExecution testSuiteExecution = FixtureHelper.buildTestSuiteExecution();
       long dateAsMillis = DateFormatter.fromDate(date);
       testSuiteExecution
@@ -106,9 +139,9 @@ class TestReportingIT extends IntegrationTestBase {
       testSuiteExecution.setProject(DUMMY_PROJECT);
       testSuiteExecution.setTestType(testType);
       testSuiteExecution.setEnvironment(environment);
+      testSuiteExecution.setLabels(labels);
 
-      testSuiteExecutionRepository.save(testSuiteExecution)
-          .toValueObject();
+      testSuiteExecutionRepository.save(testSuiteExecution);
     }
   }
 }
