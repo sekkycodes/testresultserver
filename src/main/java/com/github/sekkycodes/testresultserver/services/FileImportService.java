@@ -66,6 +66,7 @@ public class FileImportService {
     suite.setEnvironment(request.getEnvironment());
     suite.setProject(request.getProject());
     suite.setTestType(request.getTestType());
+    suite.setLabels(request.getLabels());
     TestSuiteExecutionVO suiteVO = testSuiteExecutionRepository.save(suite).toValueObject();
 
     Set<TestCaseExecutionVO> caseExecutionVOs = new HashSet<>();

@@ -23,16 +23,21 @@ class TestFileImportIT extends IntegrationTestBase {
   // from junit.xml
   private static final String SUITE_NAME = "com.github.sekkycodes.testresultserver.repositories.TestSuiteRepositoryIT";
 
+  private static final String DUMMY_LABEL = "label1";
+  private static final String DUMMY_PROJECT = "project01";
+  private static final String DUMMY_TEST_TYPE = "unit";
+  private static final String DUMMY_ENVIRONMENT = "dev";
+
   private ImportRequest importRequest;
 
   @BeforeEach
   void beforeEach() {
     importRequest = ImportRequest.builder()
-        .testType("unit")
-        .project("project01")
-        .labels(Collections.singletonList("label1"))
+        .testType(DUMMY_TEST_TYPE)
+        .project(DUMMY_PROJECT)
+        .labels(Collections.singletonList(DUMMY_LABEL))
         .executionTimeStamp(1615553404650L)
-        .environment("dev")
+        .environment(DUMMY_ENVIRONMENT)
         .build();
   }
 
@@ -48,6 +53,14 @@ class TestFileImportIT extends IntegrationTestBase {
         // .findAllByEnvironment("dev");
         .findById(new TimeNamePK(SUITE_NAME, 1615553404650L));
     assertThat(savedSuiteExecution.isEmpty()).isFalse();
+    assertThat(savedSuiteExecution.get().getLabels())
+        .isEqualTo(Collections.singletonList(DUMMY_LABEL));
+    assertThat(savedSuiteExecution.get().getProject())
+        .isEqualTo(DUMMY_PROJECT);
+    assertThat(savedSuiteExecution.get().getTestType())
+        .isEqualTo(DUMMY_TEST_TYPE);
+    assertThat(savedSuiteExecution.get().getEnvironment())
+        .isEqualTo(DUMMY_ENVIRONMENT);
 
     // And test case executions are added for the suite
     List<TestCaseExecution> savedCaseExecutions = testCaseExecutionRepository

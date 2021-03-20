@@ -40,6 +40,12 @@
               <small class="form-text text-muted">Will use timestamp in JUnit XML if present, otherwise falls back to
                 using current time.</small>
             </div>
+            <div class="form-group">
+              <label for="labelInput">Labels (optional)</label>
+              <input id="labelInput" class="form-control" type="text" v-model="labels"/>
+              <small class="form-text text-muted">Space separated free-text labels by which to later search and / or
+                aggregate</small>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" v-on:click="onUploadClicked">Upload</button>
@@ -66,7 +72,7 @@ export default {
       formData.append("environment", this.environment);
       formData.append("executionTimeStamp", this.executionTime.toString());
       formData.append("testType", this.testType);
-      formData.append("labels", "");
+      formData.append("labels", this.labels);
       axios.post("http://localhost:8081/api/result-import/import-junit", formData)
           .then(function (result) {
             console.log(result);
@@ -80,7 +86,8 @@ export default {
       environment: "",
       project: "",
       testType: "",
-      executionTime: Date.now()
+      executionTime: Date.now(),
+      labels: ""
     }
   }
 }
