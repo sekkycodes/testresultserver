@@ -3,7 +3,7 @@
     <div class="container" v-if="selection.project">
       <div class="row">
         <div class="col-md-12">
-          <h1>Latest Results</h1>
+          <h3>Latest Results</h3>
         </div>
         <div class="col-md-6">
           <LatestResultPieChart :project-name="projectName" />
@@ -14,7 +14,7 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <h1>Trends</h1>
+          <h3>Trends</h3>
         </div>
         <div class="col-md-12">
           <TrendCharts :selection="selection"/>

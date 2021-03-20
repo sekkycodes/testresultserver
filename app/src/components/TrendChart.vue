@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2> {{ testType }} </h2>
+    <h4> {{ testType }} </h4>
     <div class="row">
       <div class="col-md-12">
       <apexchart id="trend-chart" ref="trendChart" type="bar" height="350" :options="trendChartOptions"
