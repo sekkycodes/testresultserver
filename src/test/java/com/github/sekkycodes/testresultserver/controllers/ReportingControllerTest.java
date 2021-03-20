@@ -1,6 +1,7 @@
 package com.github.sekkycodes.testresultserver.controllers;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.github.sekkycodes.testresultserver.TestBase;
@@ -32,7 +33,7 @@ public class ReportingControllerTest extends TestBase {
   void beforeEach() {
     dummyTestSuiteExecution = FixtureHelper.buildTestSuiteExecution();
 
-    when(testSuiteExecutionRepository.findAll())
+    when(testSuiteExecutionRepository.findAllByProject(anyString()))
         .thenReturn(Collections.singletonList(dummyTestSuiteExecution));
 
     LatestResultsReporter latestResultsReporter = new LatestResultsReporter(
