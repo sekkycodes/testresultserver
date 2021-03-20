@@ -33,11 +33,11 @@ public class LatestResultsReporter {
    *
    * @return a collection of test suite execution results in no particular order
    */
-  public Collection<TestSuiteExecutionVO> getAllLatest() {
+  public Collection<TestSuiteExecutionVO> getAllLatest(String project) {
 
     // TODO: optimize to not load all entries from database into RAM before grouping
     Map<String, Optional<TestSuiteExecution>> grouped = suiteExecutionRepository
-        .findAll()
+        .findAllByProject(project)
         .stream()
         .collect(groupingBy(
             tse -> tse.getId().getName(),

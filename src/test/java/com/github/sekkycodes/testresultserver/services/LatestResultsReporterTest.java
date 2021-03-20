@@ -1,6 +1,7 @@
 package com.github.sekkycodes.testresultserver.services;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.github.sekkycodes.testresultserver.TestBase;
@@ -28,7 +29,7 @@ class LatestResultsReporterTest extends TestBase {
   void beforeEach() {
     dummyTestSuiteExecution = FixtureHelper.buildTestSuiteExecution();
 
-    when(testSuiteExecutionRepository.findAll())
+    when(testSuiteExecutionRepository.findAllByProject(anyString()))
         .thenReturn(Collections.singletonList(dummyTestSuiteExecution));
 
     sut = new LatestResultsReporter(testSuiteExecutionRepository);
@@ -39,7 +40,7 @@ class LatestResultsReporterTest extends TestBase {
 
     @Test
     void retrievesListOfLatestResultsAndMapsThemToValueObjects() {
-      Collection<TestSuiteExecutionVO> result = sut.getAllLatest();
+      Collection<TestSuiteExecutionVO> result = sut.getAllLatest("project01");
 
       assertThat(result.isEmpty()).isFalse();
       assertThat(result.iterator().next().getIdName())

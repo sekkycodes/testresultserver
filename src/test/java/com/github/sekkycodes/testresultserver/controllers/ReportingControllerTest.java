@@ -49,7 +49,8 @@ public class ReportingControllerTest extends TestBase {
 
     @Test
     void returnsLatestSuiteResults() {
-      ResponseEntity<Collection<TestSuiteExecutionVO>> response = sut.getAllLatestSuiteResults();
+      ResponseEntity<Collection<TestSuiteExecutionVO>> response = sut
+          .getAllLatestSuiteResults("project01");
 
       assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
       assertThat(response.getBody()).isNotNull();

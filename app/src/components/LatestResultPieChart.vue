@@ -23,9 +23,6 @@ export default {
       }
     }
   },
-  created: function () {
-
-  },
   methods: {
     loadData: function() {
       if(!this.projectName) {

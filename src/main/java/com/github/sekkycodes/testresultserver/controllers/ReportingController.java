@@ -2,9 +2,9 @@ package com.github.sekkycodes.testresultserver.controllers;
 
 import com.github.sekkycodes.testresultserver.services.AggregatedResultsReporter;
 import com.github.sekkycodes.testresultserver.services.LatestResultsReporter;
-import com.github.sekkycodes.testresultserver.vo.reporting.ReportRequest;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
+import com.github.sekkycodes.testresultserver.vo.reporting.ReportRequest;
 import java.util.Collection;
 import java.util.Objects;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -36,9 +37,10 @@ public class ReportingController {
    * @return a collection of latest suite execution results
    */
   @GetMapping("/latest-suites")
-  public ResponseEntity<Collection<TestSuiteExecutionVO>> getAllLatestSuiteResults() {
+  public ResponseEntity<Collection<TestSuiteExecutionVO>> getAllLatestSuiteResults(
+      @RequestParam String project) {
 
-    return ResponseEntity.ok(latestResultsReporter.getAllLatest());
+    return ResponseEntity.ok(latestResultsReporter.getAllLatest(project));
   }
 
   /**

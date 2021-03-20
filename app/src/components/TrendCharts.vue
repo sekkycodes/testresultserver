@@ -20,8 +20,12 @@ export default {
   props: ['selection'],
   data: function() {
     return {
-      testTypeMap: new Map(),
-      projectName: this.selection.project ? this.selection.project.name : null
+      testTypeMap: new Map()
+    }
+  },
+  computed: {
+    projectName: function() {
+      return this.selection.project ? this.selection.project.name : null;
     }
   },
   watch: {
@@ -39,6 +43,9 @@ export default {
         return;
       }
 
+      this.testTypeMap = new Map();
+
+      console.log(">>>>> projectName: " + this.projectName);
       axios.post("http://localhost:8081/api/reporting/aggregated", {
         "aggregations": [
           "TEST_TYPE",
@@ -67,9 +74,6 @@ export default {
       });
 
       this.testTypeMap = resultMap;
-
-      console.log("TrendCharts - testTypeMap: ")
-      console.dir(resultMap);
     }
   },
   mounted: function () {
