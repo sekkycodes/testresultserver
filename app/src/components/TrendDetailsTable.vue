@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     loadData: function () {
-      const params = {
+      const filter = {
         date: this.date,
         result: this.result,
         project: this.project,
@@ -58,7 +58,7 @@ export default {
         environment: this.$store.state.selection.environment
       };
 
-      axios.post("http://localhost:8081/api/testcase/by-filter", { params })
+      axios.post("http://localhost:8081/api/testcase/filter", filter)
           .then(response => {
             this.testCases = response.data;
             this.testCases.forEach(tc => {
@@ -68,8 +68,8 @@ export default {
             console.dir(this.testCases);
           });
     },
-    removeLineBreaks: function(str) {
-      if(!str){
+    removeLineBreaks: function (str) {
+      if (!str) {
         return "";
       }
       return str.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -83,19 +83,19 @@ export default {
     this.loadData();
   },
   computed: {
-    message: function() {
-      if(!this.selectedItem) {
+    message: function () {
+      if (!this.selectedItem) {
         return "";
       }
       return this.selectedItem.message ?? ""
     },
-    details: function() {
-      if(!this.selectedItem) {
+    details: function () {
+      if (!this.selectedItem) {
         return "";
       }
       return this.removeLineBreaks(this.selectedItem.details ?? "");
     },
-    modalTitle: function() {
+    modalTitle: function () {
       return this.selectedItem ? "Details for Test Case " + this.selectedItem.idName : "";
     }
   },
