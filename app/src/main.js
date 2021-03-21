@@ -35,11 +35,8 @@ const store = new Vuex.Store({
     setTestType (state, payload) {
       state.selection.testType = payload;
     },
-    addLabel (state, payload) {
-      state.selection.labels.push(payload);
-    },
-    removeLabel (state, payload) {
-      state.selection.labels.splice(state.selection.labels.indexOf(payload), 1);
+    setLabels (state, payload) {
+      state.selection.labels = payload;
     },
     resetSelection (state) {
       state.selection = {

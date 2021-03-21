@@ -4,13 +4,14 @@ import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.vo.ProjectVO;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,22 +28,35 @@ public class ProjectRetriever {
   public Set<ProjectVO> retrieveAll() {
     Collection<TestSuiteExecution> testSuites = testSuiteExecutionRepository.findAllProjects();
 
-    Map<String, Set<Pair<String, String>>> mapped = testSuites.stream()
-        .collect(Collectors.groupingBy(TestSuiteExecution::getProject,
-            Collectors
-                .mapping(e -> Pair.of(e.getEnvironment(), e.getTestType()), Collectors.toSet())));
+    Map<String, ProjectDetails> mapped = new HashMap<>();
+    for (TestSuiteExecution tse : testSuites) {
+      ProjectDetails details = mapped.get(tse.getProject());
+      if (details == null) {
+        details = new ProjectDetails();
+        mapped.put(tse.getProject(), details);
+      }
 
-    Set<ProjectVO> projects = new HashSet<>();
-    for (Map.Entry<String, Set<Pair<String, String>>> entry : mapped.entrySet()) {
-      ProjectVO project = ProjectVO.builder()
-          .name(entry.getKey())
-          .environments(entry.getValue().stream().map(Pair::getFirst).collect(Collectors.toSet()))
-          .testType(entry.getValue().stream().map(Pair::getSecond).collect(Collectors.toSet()))
-          .build();
-
-      projects.add(project);
+      details.environments.add(tse.getEnvironment());
+      details.testTypes.add(tse.getTestType());
+      details.labels.addAll(tse.getLabels());
     }
 
-    return projects;
+    return mapped.entrySet().stream()
+        .map(e ->
+            ProjectVO.builder()
+                .name(e.getKey())
+                .testType(e.getValue().getTestTypes())
+                .environments(e.getValue().getEnvironments())
+                .labels(e.getValue().getLabels())
+                .build())
+        .collect(Collectors.toSet());
+  }
+
+  @Data
+  private static class ProjectDetails {
+
+    Set<String> labels = new HashSet<>();
+    Set<String> testTypes = new HashSet<>();
+    Set<String> environments = new HashSet<>();
   }
 }

@@ -14,5 +14,6 @@ public class ProjectVO {
   String name;
   Set<String> environments;
   Set<String> testType;
+  Set<String> labels;
 
 }

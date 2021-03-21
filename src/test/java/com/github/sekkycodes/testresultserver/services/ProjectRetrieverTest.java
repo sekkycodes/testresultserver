@@ -55,6 +55,9 @@ class ProjectRetrieverTest {
       assertThat(project.getEnvironments()).isNotEmpty();
       assertThat(project.getEnvironments().iterator().next())
           .contains(dummySuiteExecution.getEnvironment());
+      assertThat(project.getLabels()).isNotEmpty();
+      assertThat(project.getLabels().iterator().next())
+          .contains(dummySuiteExecution.getLabels().get(0));
     }
   }
 }

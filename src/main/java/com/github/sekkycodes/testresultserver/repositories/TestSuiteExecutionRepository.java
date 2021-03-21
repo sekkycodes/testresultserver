@@ -26,6 +26,6 @@ public interface TestSuiteExecutionRepository extends
   @Query(" { 'project': ?0 } ")
   List<TestSuiteExecution> findAllByProject(String project);
 
-  @Query(value = "{}", fields = "{ 'project' : 1, 'environment' : 1, 'testType': 1 }")
+  @Query(value = "{}", fields = "{ 'project' : 1, 'environment' : 1, 'testType': 1, 'labels': 1 }")
   List<TestSuiteExecution> findAllProjects();
 }

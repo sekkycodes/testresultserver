@@ -95,5 +95,6 @@ class TestSuiteExecutionRepositoryIT extends IntegrationTestBase {
     assertThat(suite.get().getProject()).isEqualTo(storedExecution.getProject());
     assertThat(suite.get().getEnvironment()).isEqualTo(storedExecution.getEnvironment());
     assertThat(suite.get().getTestType()).isEqualTo(storedExecution.getTestType());
+    assertThat(suite.get().getLabels()).contains(storedExecution.getLabels().get(0));
   }
 }

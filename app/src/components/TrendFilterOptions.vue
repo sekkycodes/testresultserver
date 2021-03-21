@@ -1,7 +1,7 @@
 <template>
   <div class="filter-bar">
-    <div class="form-row">
-      <div class="col">
+    <div class="row justify-content-end">
+      <div class="col-md">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="environmentDropDown" data-toggle="dropdown"
                 aria-expanded="false">
           {{ displayedEnvironment }}
@@ -13,15 +13,26 @@
           </a>
         </div>
       </div>
+      <div class="col-md">
+        <b-form-group>
+          <b-form-checkbox-group
+              v-model="selected"
+              @change="updateLabelSelection(selected)"
+              :options="labels"
+              name="buttons-1"
+              buttons
+          ></b-form-checkbox-group>
+        </b-form-group>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+
 export default {
-  props: [],
   computed: {
-    displayedEnvironment: function() {
+    displayedEnvironment: function () {
       const env = this.$store.state.selection.environment;
       return env ?? "All Environments";
     },
@@ -46,13 +57,16 @@ export default {
     selectEnvironment: function (env) {
       this.$store.commit("setEnvironment", env);
     },
-    selectLabel: function (label) {
-      this.$store.commit("addLabel", label);
+    updateLabelSelection(selected) {
+      this.$store.commit("setLabels", selected);
     },
-    deselectLabel: function (label) {
-      this.$store.commit("removeLabel", label);
-    }
   },
+  data: function() {
+    return {
+      options: [1, 2, 3, 4],
+      selected: []
+    }
+  }
 }
 </script>
 
