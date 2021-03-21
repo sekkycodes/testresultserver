@@ -11,30 +11,38 @@
       </div>
     </header>
     <main>
-      <OptionsBar :selection="selection" />
-      <Dashboard :selection="selection" />
+      <MainOptionsBar />
+      <Dashboard />
     </main>
   </div>
 </template>
 
 <script>
 import Dashboard from './components/Dashboard.vue'
-import OptionsBar from './components/OptionsBar.vue'
+import MainOptionsBar from './components/MainOptionsBar.vue'
+import axios from "axios";
 
 export default {
   name: 'App',
   components: {
-    OptionsBar,
+    MainOptionsBar,
     Dashboard
   },
   data: function() {
     return {
-      selection: {
+      loadedProjects: [],
+      selectionData: {
         project: null,
         environment: null,
       }
     }
-  }
+  },
+  created: function () {
+    axios.get("http://localhost:8081/api/project/all")
+        .then(response => {
+          this.$store.commit("updateProjects", response.data);
+        });
+  },
 }
 </script>
 

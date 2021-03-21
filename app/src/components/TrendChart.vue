@@ -1,10 +1,12 @@
 <template>
   <div>
-    <h4> {{ testType }} </h4>
+    <div class="row">
+      <h4 class="col"> {{ testType }} </h4>
+    </div>
     <div class="row">
       <div class="col-md-12">
-      <apexchart id="trend-chart" ref="trendChart" type="bar" height="350" :options="trendChartOptions"
-                 :series="trendChartSeries"></apexchart>
+        <apexchart id="trend-chart" ref="trendChart" type="bar" height="350" :options="trendChartOptions"
+                   :series="trendChartSeries"></apexchart>
       </div>
     </div>
     <div class="row" v-if="selection.date && selection.result">
@@ -81,7 +83,7 @@ export default {
           type: 'bar',
           height: 350,
           stacked: true,
-          stackType: '100%',
+          stackType: "100%",
           redrawOnParentResize: true,
           background: 'none',
           events: {
@@ -143,7 +145,7 @@ export default {
       selection: {
         date: null,
         result: null
-      }
+      },
     }
   },
   props: {

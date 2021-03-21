@@ -8,7 +8,7 @@
         </button>
         <div class="dropdown-menu" aria-labelledby="projectDropDown">
           <a v-for="project in projects" :key="project.name" class="dropdown-item" href="#"
-             @click="selection.project = project">{{ project.name }}</a>
+             @click="setProject(project)">{{ project.name }}</a>
         </div>
       </div>
 
@@ -21,32 +21,25 @@
 
 <script>
 import JUnitXmlUpload from "@/components/JUnitXmlUpload";
-import axios from "axios";
 
 export default {
-  props: {
-    selection: Object
-  },
   components: {
     JUnitXmlUpload
   },
-  created: function () {
-    axios.get("http://localhost:8081/api/project/all")
-        .then(response => {
-          console.dir(response);
-          this.projects = response.data;
-        });
-  },
-  data: function () {
-    return {
-      projects: []
-    }
-  },
   computed: {
     displayedProject: function () {
-      return this.selection.project ? this.selection.project.name : "Project";
-    }
-  }
+      const proj = this.$store.state.selection.project;
+      return proj ? proj.name : "Project";
+    },
+    projects: function() {
+      return this.$store.state.projects;
+    },
+  },
+  methods: {
+    setProject: function(project) {
+      this.$store.commit("setProject", project);
+    },
+  },
 }
 </script>
 

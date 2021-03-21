@@ -43,11 +43,11 @@ export default {
       return this.selection.project
           ? this.selection.project.name
           : null;
-    }
+    },
+    selection: function() {
+      return this.$store.state.selection;
+    },
   },
-  props: {
-    selection: Object
-  }
 }
 
 </script>

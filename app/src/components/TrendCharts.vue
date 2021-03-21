@@ -1,5 +1,6 @@
 <template>
   <div id="trend-charts-container">
+    <TrendFilterOptions />
     <div class="row" v-for="typeEntries in Array.from(testTypeMap.entries())" :key="typeEntries.key">
         <div class="col-md-12">
         <TrendChart :test-type="typeEntries[0]" :entries="typeEntries[1]" :project="projectName" />
@@ -11,13 +12,14 @@
 <script>
 import axios from "axios";
 import TrendChart from "@/components/TrendChart";
+import TrendFilterOptions from "@/components/TrendFilterOptions";
 
 export default {
   name: "TrendCharts",
   components: {
+    TrendFilterOptions,
     TrendChart
   },
-  props: ['selection'],
   data: function() {
     return {
       testTypeMap: new Map()
@@ -26,7 +28,10 @@ export default {
   computed: {
     projectName: function() {
       return this.selection.project ? this.selection.project.name : null;
-    }
+    },
+    selection: function() {
+      return this.$store.state.selection;
+    },
   },
   watch: {
     selection: {
@@ -45,24 +50,30 @@ export default {
 
       this.testTypeMap = new Map();
 
-      console.log(">>>>> projectName: " + this.projectName);
+      const filter = {
+        "daysBack": 14,
+        "projectName": this.projectName
+      };
+
+      if(this.selection.environment) {
+        filter["environment"] = this.selection.environment;
+      }
+
+      if(this.selection.labels && this.selection.labels.length > 0) {
+        filter["labels"] = this.selection.labels;
+      }
+
       axios.post("http://localhost:8081/api/reporting/aggregated", {
         "aggregations": [
           "TEST_TYPE",
           "DATE"
         ],
-        "filter": {
-          "daysBack": 14,
-          "projectName": this.projectName
-        }
+        filter
       }).then(response => {
         this.fillCharts(response.data);
       })
     },
     fillCharts: function(data) {
-      console.log("TrendCharts - received data: ");
-      console.dir(data);
-
       let resultMap = new Map();
 
       data.entries.forEach(entry => {

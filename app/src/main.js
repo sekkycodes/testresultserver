@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Vuex from "vuex";
 import App from './App.vue'
 
 import "bootstrap";
@@ -9,7 +10,49 @@ import "bootstrap-vue/dist/bootstrap-vue.css"
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue);
+Vue.use(Vuex);
+
+const store = new Vuex.Store({
+  state: {
+    projects: [],
+    selection: {
+      project: null,
+      environment: null,
+      testType: null,
+      labels: []
+    }
+  },
+  mutations: {
+    updateProjects (state, payload) {
+      state.projects = payload;
+    },
+    setProject (state, payload) {
+      state.selection.project = payload;
+    },
+    setEnvironment (state, payload) {
+      state.selection.environment = payload;
+    },
+    setTestType (state, payload) {
+      state.selection.testType = payload;
+    },
+    addLabel (state, payload) {
+      state.selection.labels.push(payload);
+    },
+    removeLabel (state, payload) {
+      state.selection.labels.splice(state.selection.labels.indexOf(payload), 1);
+    },
+    resetSelection (state) {
+      state.selection = {
+        project: null,
+        environment: null,
+        testType: null,
+        labels: []
+      }
+    },
+  }
+});
 
 new Vue({
   render: h => h(App),
+  store,
 }).$mount('#app')
