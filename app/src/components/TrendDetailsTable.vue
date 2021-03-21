@@ -53,10 +53,12 @@ export default {
         date: this.date,
         result: this.result,
         project: this.project,
-        testType: this.testType
+        testType: this.testType,
+        labels: this.$store.state.selection.labels,
+        environment: this.$store.state.selection.environment
       };
 
-      axios.get("http://localhost:8081/api/testcase/by-date-and-result", { params })
+      axios.post("http://localhost:8081/api/testcase/by-filter", { params })
           .then(response => {
             this.testCases = response.data;
             this.testCases.forEach(tc => {

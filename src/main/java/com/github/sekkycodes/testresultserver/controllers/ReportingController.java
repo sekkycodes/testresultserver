@@ -4,9 +4,10 @@ import com.github.sekkycodes.testresultserver.services.AggregatedResultsReporter
 import com.github.sekkycodes.testresultserver.services.LatestResultsReporter;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
-import com.github.sekkycodes.testresultserver.vo.reporting.ReportRequest;
+import com.github.sekkycodes.testresultserver.vo.requests.ReportRequest;
 import java.util.Collection;
 import java.util.Objects;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +51,7 @@ public class ReportingController {
    *                      filtered and then aggregated
    * @return an aggregated report over test suite executions
    */
-  @PostMapping("/aggregated")
+  @PostMapping(value = "/aggregated", consumes = { MediaType.APPLICATION_JSON_VALUE })
   public ResponseEntity<AggregatedReport> aggregatedReport(
       @RequestBody ReportRequest reportRequest) {
 
