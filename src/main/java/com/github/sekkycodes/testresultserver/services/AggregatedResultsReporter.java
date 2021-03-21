@@ -8,7 +8,7 @@ import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregateBy;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
-import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
+import com.github.sekkycodes.testresultserver.vo.requests.TestSuiteFilter;
 import com.google.common.base.Strings;
 import com.querydsl.core.BooleanBuilder;
 import java.time.Clock;
@@ -56,7 +56,7 @@ public class AggregatedResultsReporter {
    * @param aggregateBys a list for creating the n-dimensional aggregations by
    * @return a full report with aggregated entries
    */
-  public AggregatedReport report(Filter filter, List<AggregateBy> aggregateBys) {
+  public AggregatedReport report(TestSuiteFilter filter, List<AggregateBy> aggregateBys) {
     List<TestSuiteExecutionVO> suiteExecutions = getSuiteExecutionsByFilter(filter)
         .stream().map(TestSuiteExecution::toValueObject).collect(Collectors.toList());
 
@@ -82,7 +82,7 @@ public class AggregatedResultsReporter {
         .build();
   }
 
-  private List<TestSuiteExecution> getSuiteExecutionsByFilter(Filter filter) {
+  private List<TestSuiteExecution> getSuiteExecutionsByFilter(TestSuiteFilter filter) {
 
     QTestSuiteExecution qTestSuiteExecution = new QTestSuiteExecution("test-suite-execution");
     BooleanBuilder booleanBuilder = new BooleanBuilder();

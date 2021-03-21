@@ -3,14 +3,17 @@ package com.github.sekkycodes.testresultserver.controllers;
 import com.github.sekkycodes.testresultserver.domain.TestResult;
 import com.github.sekkycodes.testresultserver.services.TestCaseRetriever;
 import com.github.sekkycodes.testresultserver.vo.TestCaseExecutionVO;
+import com.github.sekkycodes.testresultserver.vo.requests.TestCaseFilter;
+import com.google.common.base.Strings;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -28,31 +31,35 @@ public class TestCaseController {
   }
 
   /**
-   * Endpoint for retrieving test cases executed on a specified date with a given result. For
-   * example all successfully executed tests ('PASSED') on the 01.01.2021.
+   * Endpoint for retrieving test cases filtered for by a number of criteria. For example all
+   * successfully executed tests ('PASSED') on the 01.01.2021.
    *
-   * @param date   date to filter for
-   * @param result result to filter for
+   * @param filter specifies what test cases to filter for
    * @return a list of test case executions
    */
-  @GetMapping("/by-date-and-result")
-  public ResponseEntity<Set<TestCaseExecutionVO>> getByDateAndResult(
-      @RequestParam String date,
-      @RequestParam String result,
-      @RequestParam String testType,
-      @RequestParam String project
+  @PostMapping("/filter")
+  public ResponseEntity<Set<TestCaseExecutionVO>> filter(
+      @RequestBody TestCaseFilter filter
   ) {
-    TestResult filterForResult;
-    try {
-      filterForResult = TestResult.valueOf(result.toUpperCase());
-    } catch (IllegalArgumentException il) {
-      return ResponseEntity.badRequest().build();
+
+    if(!Strings.isNullOrEmpty(filter.getResult())) {
+      try {
+        TestResult.valueOf(filter.getResult().toUpperCase());
+      } catch (IllegalArgumentException il) {
+        return ResponseEntity.badRequest().build();
+      }
     }
 
-    LocalDate filterForDate = LocalDate.parse(date);
+    if(!Strings.isNullOrEmpty(filter.getDate())) {
+      try {
+        LocalDate.parse(filter.getDate());
+      } catch (DateTimeParseException dtpe) {
+        return ResponseEntity.badRequest().build();
+      }
+    }
 
     Set<TestCaseExecutionVO> testCaseExecutionVOs = testCaseRetriever
-        .retrieveByResultAndDate(filterForDate, filterForResult, testType, project);
+        .retrieveByFilter(filter);
 
     return ResponseEntity.ok(testCaseExecutionVOs);
   }

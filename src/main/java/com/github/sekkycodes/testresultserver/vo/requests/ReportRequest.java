@@ -1,9 +1,10 @@
-package com.github.sekkycodes.testresultserver.vo.reporting;
+package com.github.sekkycodes.testresultserver.vo.requests;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.github.sekkycodes.testresultserver.vo.reporting.AggregateBy;
 import java.util.List;
 import lombok.Builder;
 import lombok.Value;
@@ -29,7 +30,7 @@ public class ReportRequest {
    * filter criteria. The filter criteria are therefore joined together on an AND-basis rather than
    * an OR-basis.
    */
-  Filter filter;
+  TestSuiteFilter filter;
 
   @JsonPOJOBuilder(withPrefix = "")
   public static class ReportRequestBuilder {

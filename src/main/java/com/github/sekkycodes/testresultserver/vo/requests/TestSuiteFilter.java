@@ -1,4 +1,4 @@
-package com.github.sekkycodes.testresultserver.vo.reporting;
+package com.github.sekkycodes.testresultserver.vo.requests;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -16,8 +16,8 @@ import lombok.Value;
 @Value
 @Builder(toBuilder = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-@JsonDeserialize(builder = Filter.FilterBuilder.class)
-public class Filter {
+@JsonDeserialize(builder = TestSuiteFilter.FilterBuilder.class)
+public class TestSuiteFilter {
 
   /**
    * Only consider suites matching the project name
