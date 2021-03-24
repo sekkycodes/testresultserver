@@ -42,7 +42,7 @@ public class TestCaseController {
       @RequestBody TestCaseFilter filter
   ) {
 
-    if(!Strings.isNullOrEmpty(filter.getResult())) {
+    if (!Strings.isNullOrEmpty(filter.getResult())) {
       try {
         TestResult.valueOf(filter.getResult().toUpperCase());
       } catch (IllegalArgumentException il) {
@@ -50,7 +50,7 @@ public class TestCaseController {
       }
     }
 
-    if(!Strings.isNullOrEmpty(filter.getDate())) {
+    if (!Strings.isNullOrEmpty(filter.getDate())) {
       try {
         LocalDate.parse(filter.getDate());
       } catch (DateTimeParseException dtpe) {

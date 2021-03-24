@@ -2,10 +2,8 @@ package com.github.sekkycodes.testresultserver.controllers;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import com.github.sekkycodes.testresultserver.domain.TestResult;
 import com.github.sekkycodes.testresultserver.services.TestCaseRetriever;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
 import com.github.sekkycodes.testresultserver.vo.TestCaseExecutionVO;

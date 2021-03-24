@@ -11,7 +11,6 @@ import com.github.sekkycodes.testresultserver.vo.requests.TestCaseFilter;
 import com.google.common.base.Strings;
 import com.querydsl.core.BooleanBuilder;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,33 +43,33 @@ public class TestCaseRetriever {
     QTestSuiteExecution qSuite = new QTestSuiteExecution("test-suite-execution");
     BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-    if(!Strings.isNullOrEmpty(filter.getDate())) {
+    if (!Strings.isNullOrEmpty(filter.getDate())) {
       booleanBuilder.and(qSuite.executionDate.eq(LocalDate.parse(filter.getDate())));
     }
 
-    if(!Strings.isNullOrEmpty(filter.getEnvironment())) {
+    if (!Strings.isNullOrEmpty(filter.getEnvironment())) {
       booleanBuilder.and(qSuite.environment.eq(filter.getEnvironment()));
     }
 
-    if(!Strings.isNullOrEmpty(filter.getProjectName())) {
+    if (!Strings.isNullOrEmpty(filter.getProjectName())) {
       booleanBuilder.and(qSuite.project.eq(filter.getProjectName()));
     }
 
-    if(!Strings.isNullOrEmpty(filter.getTestType())) {
+    if (!Strings.isNullOrEmpty(filter.getTestType())) {
       booleanBuilder.and(qSuite.testType.eq(filter.getTestType()));
     }
 
-    if(filter.getLabels() != null) {
-      for(String label : filter.getLabels()) {
+    if (filter.getLabels() != null) {
+      for (String label : filter.getLabels()) {
         booleanBuilder.and(qSuite.labels.contains(label));
       }
     }
 
     TestResult result = null;
-    if(!Strings.isNullOrEmpty(filter.getResult())) {
+    if (!Strings.isNullOrEmpty(filter.getResult())) {
       result = TestResult.valueOf(filter.getResult().toUpperCase());
 
-      switch(result) {
+      switch (result) {
         case PASSED:
           booleanBuilder.and(qSuite.testCasesPassed.gt(0));
           break;

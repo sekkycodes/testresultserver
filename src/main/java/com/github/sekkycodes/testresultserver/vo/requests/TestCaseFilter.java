@@ -9,8 +9,8 @@ import lombok.Builder;
 import lombok.Value;
 
 /**
- * Determines what entries to filter for. All properties are optional and won't be considered if
- * not set.
+ * Determines what entries to filter for. All properties are optional and won't be considered if not
+ * set.
  */
 @Value
 @Builder(toBuilder = true)
