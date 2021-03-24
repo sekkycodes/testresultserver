@@ -12,7 +12,7 @@ import com.github.sekkycodes.testresultserver.utils.DateFormatter;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregateBy;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
-import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
+import com.github.sekkycodes.testresultserver.vo.requests.TestSuiteFilter;
 import com.querydsl.core.types.Predicate;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -81,7 +81,7 @@ class AggregatedResultReporterTest extends TestBase {
 
       // act
       AggregatedReport result = sut
-          .report(Filter.builder().build(), Collections.singletonList(AggregateBy.DATE));
+          .report(TestSuiteFilter.builder().build(), Collections.singletonList(AggregateBy.DATE));
 
       // assert
       assertThat(result.getAggregationDimensions().size()).isEqualTo(1);
@@ -128,7 +128,7 @@ class AggregatedResultReporterTest extends TestBase {
 
       // act
       AggregatedReport result = sut
-          .report(Filter.builder().build(), Collections.singletonList(AggregateBy.ENVIRONMENT));
+          .report(TestSuiteFilter.builder().build(), Collections.singletonList(AggregateBy.ENVIRONMENT));
 
       // assert
       assertThat(result.getAggregationDimensions().size()).isEqualTo(1);
@@ -158,7 +158,7 @@ class AggregatedResultReporterTest extends TestBase {
     @Test
     void aggregatesByTestType() {
       // arrange
-      Filter filter = Filter.builder()
+      TestSuiteFilter filter = TestSuiteFilter.builder()
           .projectName(DUMMY_PROJECT)
           .build();
 
@@ -185,7 +185,7 @@ class AggregatedResultReporterTest extends TestBase {
     @Test
     void sumsUnitTestSuitesInAggregatedResult() {
       // arrange
-      Filter filter = Filter.builder()
+      TestSuiteFilter filter = TestSuiteFilter.builder()
           .projectName(DUMMY_PROJECT)
           .build();
 
@@ -232,7 +232,7 @@ class AggregatedResultReporterTest extends TestBase {
       when(testSuiteExecutionRepository.findAll(Mockito.<Predicate>any()))
           .thenReturn(suiteExecutions);
 
-      Filter filter = Filter.builder()
+      TestSuiteFilter filter = TestSuiteFilter.builder()
           .daysBack(5)
           .build();
 

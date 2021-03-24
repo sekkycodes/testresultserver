@@ -11,8 +11,8 @@ import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregateBy;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
-import com.github.sekkycodes.testresultserver.vo.reporting.Filter;
-import com.github.sekkycodes.testresultserver.vo.reporting.ReportRequest;
+import com.github.sekkycodes.testresultserver.vo.requests.TestSuiteFilter;
+import com.github.sekkycodes.testresultserver.vo.requests.ReportRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +51,7 @@ class TestReportingIT extends IntegrationTestBase {
       aggregations.add(AggregateBy.DATE);
       aggregations.add(AggregateBy.ENVIRONMENT);
       ReportRequest request = ReportRequest.builder()
-          .filter(Filter.builder()
+          .filter(TestSuiteFilter.builder()
               .projectName(DUMMY_PROJECT)
               .daysBack(14)
               .build())
@@ -85,7 +85,7 @@ class TestReportingIT extends IntegrationTestBase {
       addTest("Unit", "staging", "2020-01-29", Collections.singletonList("label11"));
       addTest("Unit", "staging", "2020-01-29", Collections.singletonList("label12"));
       ReportRequest request = ReportRequest.builder()
-          .filter(Filter.builder()
+          .filter(TestSuiteFilter.builder()
               .testType("Unit")
               .daysBack(14)
               .labels(Collections.singletonList("label12"))
