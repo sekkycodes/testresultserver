@@ -68,7 +68,7 @@ export default {
           "TEST_TYPE",
           "DATE"
         ],
-        filter
+        "filter": filter
       }).then(response => {
         this.fillCharts(response.data);
       })
