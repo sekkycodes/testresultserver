@@ -48,7 +48,9 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" v-on:click="onUploadClicked">Upload</button>
+            <button type="button" class="btn btn-primary" v-on:click="onUploadClicked" :disabled="uploading">
+              Upload
+            </button>
           </div>
         </div>
       </div>
@@ -73,12 +75,17 @@ export default {
       formData.append("executionTimeStamp", this.executionTime.toString());
       formData.append("testType", this.testType);
       formData.append("labels", this.labels);
+
+      console.dir(file);
+
+      this.uploading = true;
       axios.post("http://localhost:8081/api/result-import/import-junit", formData)
-          .then(function (result) {
-            console.log(result);
-          }, function (error) {
-            console.log(error);
-          });
+          .then(() => {
+            this.$toastr.s("Uploaded file: " + file.name);
+          }, error =>  {
+            this.$toastr.e("Error uploading file(s): " + error)
+          })
+          .finally(() => this.uploading = false);
     }
   },
   data() {
@@ -87,7 +94,8 @@ export default {
       project: "",
       testType: "",
       executionTime: Date.now(),
-      labels: ""
+      labels: "",
+      uploading: false,
     }
   }
 }

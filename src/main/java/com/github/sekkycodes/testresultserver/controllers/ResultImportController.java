@@ -2,6 +2,8 @@ package com.github.sekkycodes.testresultserver.controllers;
 
 import com.github.sekkycodes.testresultserver.exceptions.ImportException;
 import com.github.sekkycodes.testresultserver.services.FileImportService;
+import com.github.sekkycodes.testresultserver.validators.ImportRequestValidator;
+import com.github.sekkycodes.testresultserver.validators.ValidationResult;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportResult;
 import java.util.Arrays;
@@ -24,13 +26,18 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class ResultImportController {
 
-  public static final String NO_FILE_ERROR_TEXT = "no file supplied for import";
+  public static final String NO_FILE_ERROR_TEXT = "No file supplied for import";
 
   private final FileImportService fileImportService;
+  private final ImportRequestValidator importRequestValidator;
 
   @Autowired
-  public ResultImportController(FileImportService fileImportService) {
+  public ResultImportController(
+      FileImportService fileImportService,
+      ImportRequestValidator importRequestValidator) {
+
     this.fileImportService = Objects.requireNonNull(fileImportService);
+    this.importRequestValidator = Objects.requireNonNull(importRequestValidator);
   }
 
   /**
@@ -61,6 +68,13 @@ public class ResultImportController {
         .testType(testType)
         .labels(Arrays.asList(labels.split(" ")))
         .build();
+
+    ValidationResult validationResult = importRequestValidator.validate(fileImportRequest);
+    if (!validationResult.isValid()) {
+      return new ResponseEntity<>(
+          ImportResult.builder().errorMessage(validationResult.getValidationMessage()).build(),
+          HttpStatus.BAD_REQUEST);
+    }
 
     try {
       ImportResult response = fileImportService.importJunitFile(file, fileImportRequest);
