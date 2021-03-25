@@ -76,13 +76,12 @@ export default {
       formData.append("testType", this.testType);
       formData.append("labels", this.labels);
 
-      console.dir(file);
-
       this.uploading = true;
       axios.post("http://localhost:8081/api/result-import/import-junit", formData)
           .then(() => {
             this.$toastr.s("Uploaded file: " + file.name);
           }, error =>  {
+            console.error(error);
             this.$toastr.e("Error uploading file(s): " + error)
           })
           .finally(() => this.uploading = false);

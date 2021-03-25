@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class TestCaseControllerIT extends IntegrationTestBase {
+class TestCaseControllerIT extends IntegrationTestBase {
 
   @Autowired
   TestCaseController testCaseController;
