@@ -14,6 +14,8 @@ import com.github.sekkycodes.testresultserver.repositories.TestCaseExecutionRepo
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -69,7 +71,9 @@ class FileImportServiceTest extends TestBase {
     void throwsImportExceptionInCaseReadingInputStreamFails() {
       assertThrows(ImportException.class,
           () -> sut
-              .importJunitFile(textInputStream(), importRequest));
+              .importJunitFile(
+                  () -> new ByteArrayInputStream("123".getBytes(StandardCharsets.UTF_8)),
+                  importRequest));
     }
 
     @Test
