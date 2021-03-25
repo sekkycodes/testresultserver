@@ -11,6 +11,7 @@ import com.github.sekkycodes.testresultserver.vo.TestCaseExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportResult;
+import com.google.common.base.Strings;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -66,7 +67,12 @@ public class FileImportService {
     suite.setEnvironment(request.getEnvironment());
     suite.setProject(request.getProject());
     suite.setTestType(request.getTestType());
-    suite.setLabels(request.getLabels());
+    request.getLabels().forEach(l -> {
+      if (!Strings.isNullOrEmpty(l)) {
+        suite.getLabels().add(l);
+      }
+    });
+
     TestSuiteExecutionVO suiteVO = testSuiteExecutionRepository.save(suite).toValueObject();
 
     Set<TestCaseExecutionVO> caseExecutionVOs = new HashSet<>();

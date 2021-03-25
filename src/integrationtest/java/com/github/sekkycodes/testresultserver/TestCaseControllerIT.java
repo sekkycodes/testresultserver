@@ -153,7 +153,7 @@ public class TestCaseControllerIT extends IntegrationTestBase {
   }
 
   private TestSuiteExecution buildTestSuite() {
-    List<String> labels = new ArrayList<>();
+    Set<String> labels = new HashSet<>();
     labels.add(DUMMY_LABEL);
     labels.add("anotherLabel");
 
