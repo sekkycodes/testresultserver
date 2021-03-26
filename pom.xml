@@ -121,13 +121,6 @@
     <finalName>${project.artifactId}</finalName>
     <resources>
       <resource>
-        <directory>db/migration</directory>
-        <includes>
-          <include>**/*.sql</include>
-        </includes>
-        <targetPath>db/migration</targetPath>
-      </resource>
-      <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
       </resource>
