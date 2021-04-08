@@ -38,7 +38,7 @@ export default {
     }
   },
   created: function () {
-    axios.get("http://localhost:8081/api/project/all")
+    axios.get("http://backend:8081/api/project/all")
         .then(response => {
           this.$store.commit("updateProjects", response.data);
         });

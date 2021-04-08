@@ -77,7 +77,7 @@ export default {
       formData.append("labels", this.labels);
 
       this.uploading = true;
-      axios.post("http://localhost:8081/api/result-import/import-junit", formData)
+      axios.post("http://backend:8081/api/result-import/import-junit", formData)
           .then(() => {
             this.$toastr.s("Uploaded file: " + file.name);
           }, error =>  {
