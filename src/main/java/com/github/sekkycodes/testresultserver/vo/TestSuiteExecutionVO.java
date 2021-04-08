@@ -1,6 +1,6 @@
 package com.github.sekkycodes.testresultserver.vo;
 
-import java.util.List;
+import java.util.Set;
 import lombok.Builder;
 import lombok.Value;
 
@@ -16,7 +16,7 @@ public class TestSuiteExecutionVO {
   String project;
   String testType;
   String environment;
-  List<String> labels;
+  Set<String> labels;
   long duration;
   int testCasesTotal;
   int testCasesPassed;

@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class TestCaseControllerIT extends IntegrationTestBase {
+class TestCaseControllerIT extends IntegrationTestBase {
 
   @Autowired
   TestCaseController testCaseController;
@@ -153,7 +153,7 @@ public class TestCaseControllerIT extends IntegrationTestBase {
   }
 
   private TestSuiteExecution buildTestSuite() {
-    List<String> labels = new ArrayList<>();
+    Set<String> labels = new HashSet<>();
     labels.add(DUMMY_LABEL);
     labels.add("anotherLabel");
 

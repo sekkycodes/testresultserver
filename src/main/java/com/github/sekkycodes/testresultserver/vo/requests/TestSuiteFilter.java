@@ -16,7 +16,7 @@ import lombok.Value;
 @Value
 @Builder(toBuilder = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-@JsonDeserialize(builder = TestSuiteFilter.FilterBuilder.class)
+@JsonDeserialize(builder = TestSuiteFilter.TestSuiteFilterBuilder.class)
 public class TestSuiteFilter {
 
   /**
@@ -47,7 +47,7 @@ public class TestSuiteFilter {
   int daysBack;
 
   @JsonPOJOBuilder(withPrefix = "")
-  public static class FilterBuilder {
+  public static class TestSuiteFilterBuilder {
 
   }
 }

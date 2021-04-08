@@ -7,10 +7,12 @@ import "bootswatch/dist/darkly/bootstrap.min.css";
 import "moment";
 import BootstrapVue from "bootstrap-vue";
 import "bootstrap-vue/dist/bootstrap-vue.css"
+import VueToastr from "vue-toastr";
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue);
 Vue.use(Vuex);
+Vue.use(VueToastr);
 
 const store = new Vuex.Store({
   state: {

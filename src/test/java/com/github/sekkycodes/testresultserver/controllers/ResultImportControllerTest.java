@@ -17,6 +17,7 @@ import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRep
 import com.github.sekkycodes.testresultserver.services.FileImportService;
 import com.github.sekkycodes.testresultserver.services.JunitReader;
 import com.github.sekkycodes.testresultserver.testutils.FixtureHelper;
+import com.github.sekkycodes.testresultserver.validators.ImportRequestValidator;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportRequest;
 import com.github.sekkycodes.testresultserver.vo.importing.ImportResult;
 import java.io.IOException;
@@ -89,7 +90,7 @@ class ResultImportControllerTest extends TestBase {
         .labels("label1 label2")
         .build();
 
-    sut = new ResultImportController(fileImportService);
+    sut = new ResultImportController(fileImportService, new ImportRequestValidator());
   }
 
   @AfterEach
@@ -124,7 +125,7 @@ class ResultImportControllerTest extends TestBase {
       FileImportService fileImportService = mock(FileImportService.class);
       when(fileImportService.importJunitFile(any(), any()))
           .thenThrow(new ImportException("some error"));
-      sut = new ResultImportController(fileImportService);
+      sut = new ResultImportController(fileImportService, new ImportRequestValidator());
 
       ResponseEntity<ImportResult> responseEntity = invoke();
 
@@ -138,6 +139,16 @@ class ResultImportControllerTest extends TestBase {
       ResponseEntity<ImportResult> responseEntity = invoke();
 
       assertErrorMessage(responseEntity, ResultImportController.NO_FILE_ERROR_TEXT,
+          HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void returnsBadRequestIfValidationFails() {
+      params.setEnvironment(null);
+
+      ResponseEntity<ImportResult> responseEntity = invoke();
+
+      assertErrorMessage(responseEntity, ImportRequestValidator.ENVIRONMENT_EMPTY,
           HttpStatus.BAD_REQUEST);
     }
 

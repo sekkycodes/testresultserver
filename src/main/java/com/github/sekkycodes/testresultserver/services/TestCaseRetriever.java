@@ -4,7 +4,6 @@ import com.github.sekkycodes.testresultserver.domain.QTestSuiteExecution;
 import com.github.sekkycodes.testresultserver.domain.TestCaseExecution;
 import com.github.sekkycodes.testresultserver.domain.TestResult;
 import com.github.sekkycodes.testresultserver.domain.TestSuiteExecution;
-import com.github.sekkycodes.testresultserver.repositories.TestCaseExecutionRepository;
 import com.github.sekkycodes.testresultserver.repositories.TestSuiteExecutionRepository;
 import com.github.sekkycodes.testresultserver.vo.TestCaseExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.requests.TestCaseFilter;

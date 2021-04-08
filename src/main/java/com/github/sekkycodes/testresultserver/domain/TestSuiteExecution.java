@@ -1,11 +1,13 @@
 package com.github.sekkycodes.testresultserver.domain;
 
 import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.querydsl.core.annotations.QueryEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -62,7 +64,7 @@ public class TestSuiteExecution {
    * filter.
    */
   @Builder.Default
-  List<String> labels = new ArrayList<>();
+  Set<String> labels = new HashSet<>();
 
   /**
    * How long the test suite was running until all test cases completed (in milliseconds)
@@ -114,7 +116,7 @@ public class TestSuiteExecution {
         .project(getProject())
         .testType(getTestType())
         .environment(getEnvironment())
-        .labels(ImmutableList.copyOf(labels))
+        .labels(ImmutableSet.copyOf(labels))
         .duration(getDuration())
         .testCasesTotal(getTestCasesTotal())
         .testCasesPassed(getTestCasesPassed())

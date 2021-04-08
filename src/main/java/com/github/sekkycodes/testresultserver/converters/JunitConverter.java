@@ -80,19 +80,16 @@ public class JunitConverter {
     String details = Strings.EMPTY;
     String failureType = Strings.EMPTY;
 
-    switch (result) {
-      case FAILED:
-        Failure failure = testCase.getFailure();
-        message = failure.getMessage();
-        details = failure.getValue();
-        failureType = failure.getType();
-        break;
-      case ERROR:
-        Error error = testCase.getError();
-        message = error.getMessage();
-        details = error.getValue();
-        failureType = error.getType();
-        break;
+    if (result == TestResult.FAILED) {
+      Failure failure = testCase.getFailure();
+      message = failure.getMessage();
+      details = failure.getValue();
+      failureType = failure.getType();
+    } else if (result == TestResult.ERROR) {
+      Error error = testCase.getError();
+      message = error.getMessage();
+      details = error.getValue();
+      failureType = error.getType();
     }
 
     return TestCaseExecution.builder()
