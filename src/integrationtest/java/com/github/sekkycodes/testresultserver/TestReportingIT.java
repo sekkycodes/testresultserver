@@ -11,13 +11,14 @@ import com.github.sekkycodes.testresultserver.vo.TestSuiteExecutionVO;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregateBy;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport;
 import com.github.sekkycodes.testresultserver.vo.reporting.AggregatedReport.AggregatedReportEntry;
-import com.github.sekkycodes.testresultserver.vo.requests.TestSuiteFilter;
 import com.github.sekkycodes.testresultserver.vo.requests.ReportRequest;
+import com.github.sekkycodes.testresultserver.vo.requests.TestSuiteFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Nested;
@@ -81,9 +82,9 @@ class TestReportingIT extends IntegrationTestBase {
     void createsReportFiltersOutUnwantedTestTypesAndEnvironments() {
       // arrange
       setUpTestData();
-      addTest("Unit", "local", "2020-01-29", Collections.singletonList("label12"));
-      addTest("Unit", "staging", "2020-01-29", Collections.singletonList("label11"));
-      addTest("Unit", "staging", "2020-01-29", Collections.singletonList("label12"));
+      addTest("Unit", "local", "2020-01-29", Collections.singleton("label12"));
+      addTest("Unit", "staging", "2020-01-29", Collections.singleton("label11"));
+      addTest("Unit", "staging", "2020-01-29", Collections.singleton("label12"));
       ReportRequest request = ReportRequest.builder()
           .filter(TestSuiteFilter.builder()
               .testType("Unit")
@@ -128,10 +129,10 @@ class TestReportingIT extends IntegrationTestBase {
     }
 
     private void addTest(String testType, String environment, String date) {
-      addTest(testType, environment, date, Collections.emptyList());
+      addTest(testType, environment, date, Collections.emptySet());
     }
 
-    private void addTest(String testType, String environment, String date, List<String> labels) {
+    private void addTest(String testType, String environment, String date, Set<String> labels) {
       TestSuiteExecution testSuiteExecution = FixtureHelper.buildTestSuiteExecution();
       long dateAsMillis = DateFormatter.fromDate(date);
       testSuiteExecution

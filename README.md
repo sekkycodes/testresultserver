@@ -60,7 +60,7 @@ Import the intellij-java-google-style.xml when coding with IntelliJ IDEA.
 
 To run tests:
 
-    mvn test
+    mvn test -Dskip.npm
 
 This will also create a Jacoco test coverage report under target/site.
 

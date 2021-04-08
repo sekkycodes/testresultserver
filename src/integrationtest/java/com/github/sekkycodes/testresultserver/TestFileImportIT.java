@@ -54,7 +54,7 @@ class TestFileImportIT extends IntegrationTestBase {
         .findById(new TimeNamePK(SUITE_NAME, 1615553404650L));
     assertThat(savedSuiteExecution.isEmpty()).isFalse();
     assertThat(savedSuiteExecution.get().getLabels())
-        .isEqualTo(Collections.singletonList(DUMMY_LABEL));
+        .isEqualTo(Collections.singleton(DUMMY_LABEL));
     assertThat(savedSuiteExecution.get().getProject())
         .isEqualTo(DUMMY_PROJECT);
     assertThat(savedSuiteExecution.get().getTestType())
