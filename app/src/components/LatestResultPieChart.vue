@@ -29,7 +29,7 @@ export default {
         return
       }
 
-      axios.get("http://localhost:8081/api/reporting/latest-suites?project=" + this.projectName)
+      axios.get("http://backend:8081/api/reporting/latest-suites?project=" + this.projectName)
           .then(response => {
             this.series = [0, 0, 0, 0]
             response.data.forEach(d => {

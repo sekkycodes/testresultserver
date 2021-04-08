@@ -63,7 +63,7 @@ export default {
         filter["labels"] = this.selection.labels;
       }
 
-      axios.post("http://localhost:8081/api/reporting/aggregated", {
+      axios.post("http://backend:8081/api/reporting/aggregated", {
         "aggregations": [
           "TEST_TYPE",
           "DATE"

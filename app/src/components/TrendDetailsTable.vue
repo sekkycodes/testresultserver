@@ -58,7 +58,7 @@ export default {
         environment: this.$store.state.selection.environment
       };
 
-      axios.post("http://localhost:8081/api/testcase/filter", filter)
+      axios.post("http://backend:8081/api/testcase/filter", filter)
           .then(response => {
             this.testCases = response.data;
             this.testCases.forEach(tc => {

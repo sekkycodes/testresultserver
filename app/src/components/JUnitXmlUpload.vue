@@ -73,11 +73,15 @@ export default {
       formData.append("executionTimeStamp", this.executionTime.toString());
       formData.append("testType", this.testType);
       formData.append("labels", this.labels);
-      axios.post("http://localhost:8081/api/result-import/import-junit", formData)
+
+      this.uploading = true;
+      axios.post("http://backend:8081/api/result-import/import-junit", formData)
           .then(function (result) {
             console.log(result);
           }, function (error) {
             console.log(error);
+          }, function() {
+            this.uploading = false;
           });
     }
   },
@@ -87,7 +91,8 @@ export default {
       project: "",
       testType: "",
       executionTime: Date.now(),
-      labels: ""
+      labels: "",
+      uploading: false
     }
   }
 }
