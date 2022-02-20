@@ -1,5 +1,6 @@
 package com.github.sekkycodes;
 
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -15,10 +16,11 @@ public class CucumberStepDefinitions {
 
   @When("the client is invoked with the cucumber option and the file path")
   public void theClientIsInvokedWithTheCucumberOptionAndTheFilePath() {
-
+    throw new PendingException();
   }
 
   @Then("the scenarios are uploaded as new test cases to the server")
   public void theScenariosAreUploadedAsNewTestCasesToTheServer() {
+    throw new PendingException();
   }
 }
